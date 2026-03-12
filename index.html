@@ -19,21 +19,16 @@
         :root {
             --bg-deep: #010204;
             --bg-mid: #050A14;
-            --bg-highlight: #0A1428;
             
             --accent-primary: #90E0AF;
             --accent-glow: rgba(144, 224, 175, 0.6);
-            --accent-secondary: #4A88D9;
             
             --text-pure: #FFFFFF;
-            --text-bright: rgba(255, 255, 255, 0.9);
             --text-dim: rgba(255, 255, 255, 0.4);
             
-            --glass-bg: rgba(255, 255, 255, 0.015);
             --glass-border: rgba(255, 255, 255, 0.05);
             
             --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
-            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
@@ -44,32 +39,21 @@
         .lenis.lenis-stopped { overflow: hidden; }
 
         body {
-            background-color: var(--bg-deep);
-            color: var(--text-pure);
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            transition: background-color 1.5s var(--ease-apple);
+            background-color: var(--bg-deep); color: var(--text-pure);
+            font-family: 'Inter', sans-serif; overflow-x: hidden;
+            -webkit-font-smoothing: antialiased; transition: background-color 1.5s var(--ease-apple);
         }
-
-        .mono { font-family: 'JetBrains Mono', monospace; }
         
-        /* Selection styling */
         ::selection { background: var(--accent-primary); color: #000; }
 
         /* ==========================================================================
            2. GLOBAL ENVIRONMENT EFFECTS (Canvas, Noise, Grid, HUD)
            ========================================================================== */
         #ambient-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; opacity: 0.8; }
-        
         .gradient-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at 50% 0%, var(--bg-mid) 0%, transparent 80%); z-index: -1; pointer-events: none; mix-blend-mode: screen; transition: background 1.5s var(--ease-apple); }
-        
         .tech-grid { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px); background-size: 60px 60px; z-index: -1; pointer-events: none; opacity: 0.7; mask-image: radial-gradient(circle at center, black 30%, transparent 100%); -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 100%); }
-        
         .noise { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9998; opacity: 0.05; mix-blend-mode: overlay; background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); }
 
-        /* --- THE HUD (Heads Up Display) --- */
         .hud { position: fixed; z-index: 8000; pointer-events: none; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; }
         .hud-top-left { top: 30px; left: 30px; }
         .hud-bottom-right { bottom: 30px; right: 30px; text-align: right; }
@@ -84,10 +68,8 @@
            ========================================================================== */
         .cursor-dot { width: 5px; height: 5px; background: var(--accent-primary); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: opacity 0.3s; }
         .cursor-ring { width: 35px; height: 35px; border: 1px solid rgba(144, 224, 175, 0.5); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: width 0.3s var(--ease-apple), height 0.3s var(--ease-apple), background 0.3s var(--ease-apple), border-color 0.3s; }
-        
         .cursor-hover .cursor-ring { width: 70px; height: 70px; background: rgba(144, 224, 175, 0.05); border-color: rgba(144, 224, 175, 0.8); backdrop-filter: blur(4px); }
         .cursor-hover .cursor-dot { transform: translate(-50%, -50%) scale(0); }
-        .cursor-drag .cursor-ring { width: 50px; height: 50px; background: var(--text-pure); mix-blend-mode: difference; border: none; }
 
         /* ==========================================================================
            4. TERMINAL BOOT PRELOADER
@@ -96,7 +78,6 @@
         .terminal-header { font-family: 'JetBrains Mono', monospace; color: var(--text-dim); font-size: 12px; }
         .terminal-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
         .terminal-line { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--accent-primary); margin-bottom: 8px; opacity: 0; text-shadow: 0 0 5px rgba(144,224,175,0.4); }
-        .terminal-line.error { color: #ff3366; text-shadow: 0 0 5px rgba(255,51,102,0.4); }
         .loader-math { font-family: 'Inter', sans-serif; font-size: 15vw; font-weight: 900; letter-spacing: -0.05em; line-height: 1; color: var(--text-pure); align-self: flex-end; }
         .loader-bar-bg { width: 100%; height: 1px; background: rgba(255,255,255,0.1); margin-top: 20px; position: relative; }
         .loader-bar-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--text-pure); transition: width 0.1s; }
@@ -104,11 +85,22 @@
         /* ==========================================================================
            5. NAVIGATION UI & FIXED PROFILE PIC
            ========================================================================== */
-        #hero-profile-pic { position: fixed; z-index: 6000; object-fit: cover; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); opacity: 0; pointer-events: none; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+        /* The Profile Picture that flies to the top left */
+        #hero-profile-pic { 
+            position: fixed; 
+            z-index: 6000; 
+            object-fit: cover; 
+            border-radius: 50%; 
+            border: 1px solid rgba(255,255,255,0.2); 
+            opacity: 0; /* Revealed by preloader */
+            pointer-events: none; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8); 
+            /* Starting position is handled in JS below */
+        }
 
         nav { position: fixed; top: 0; left: 0; width: 100%; padding: 40px 6vw; display: flex; justify-content: space-between; align-items: center; z-index: 5000; mix-blend-mode: difference; }
         .nav-logo { display: flex; align-items: center; gap: 20px; }
-        .logo-placeholder { width: 50px; height: 50px; border-radius: 50%; }
+        .logo-placeholder { width: 50px; height: 50px; border-radius: 50%; } /* Empty space for photo to dock into */
         .nav-logo span { font-size: 16px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; }
         
         .nav-links { display: flex; gap: 20px; }
@@ -120,11 +112,13 @@
            6. HERO SECTION
            ========================================================================== */
         .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 0 6vw; perspective: 1000px; }
-        .hero-spacer { height: 200px; } 
+        
+        /* Pushes the name down so the centered profile pic fits perfectly above it */
+        .hero-spacer { height: 160px; } 
 
-        .hero-name { font-family: 'JetBrains Mono', monospace; font-size: 24px; letter-spacing: 20px; text-transform: uppercase; margin-bottom: 3vh; opacity: 0; margin-left: 20px; /* Offset for tracking */ background: linear-gradient(120deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) 45%, #ffffff 50%, rgba(255,255,255,0.1) 55%, rgba(255,255,255,0.1) 100%); background-size: 250% auto; color: transparent; -webkit-background-clip: text; background-position: 100% center; }
+        .hero-name { font-family: 'JetBrains Mono', monospace; font-size: 24px; letter-spacing: 20px; text-transform: uppercase; margin-bottom: 3vh; opacity: 0; margin-left: 20px; background: linear-gradient(120deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) 45%, #ffffff 50%, rgba(255,255,255,0.1) 55%, rgba(255,255,255,0.1) 100%); background-size: 250% auto; color: transparent; -webkit-background-clip: text; background-position: 100% center; }
         .hero-tagline { font-family: 'JetBrains Mono', monospace; color: var(--accent-primary); font-size: 12px; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 2vh; opacity: 0; }
-        .hero-title { font-size: clamp(50px, 11vw, 160px); font-weight: 900; line-height: 0.9; letter-spacing: -0.04em; text-transform: uppercase; text-align: center; color: var(--text-pure); filter: drop-shadow(0 30px 50px rgba(0,0,0,0.8)); transform-style: preserve-3d; }
+        .hero-title { font-size: clamp(50px, 11vw, 160px); font-weight: 900; line-height: 0.9; letter-spacing: -0.04em; text-transform: uppercase; text-align: center; color: var(--text-pure); filter: drop-shadow(0 30px 50px rgba(0,0,0,0.8)); }
         
         .scroll-indicator { position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 20px; opacity: 0.4; transition: opacity 0.4s; }
         .scroll-indicator:hover { opacity: 1; }
@@ -142,7 +136,7 @@
         model-viewer { width: 100%; height: 100%; --poster-color: transparent; filter: drop-shadow(0 40px 60px rgba(0,0,0,0.8)); }
 
         /* ==========================================================================
-           8. INFINITE WORKFLOW MARQUEE
+           8. INTERACTIVE MARQUEE
            ========================================================================== */
         .marquee-section { padding: 10vh 0; background: #000; border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); position: relative; z-index: 10; overflow: hidden; display: flex; flex-direction: column; gap: 20px; }
         .marquee-track { display: flex; width: max-content; }
@@ -150,16 +144,13 @@
         .marquee-item h3 { font-size: clamp(40px, 5vw, 80px); font-weight: 900; text-transform: uppercase; letter-spacing: -2px; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.15); white-space: nowrap; transition: color 0.3s, -webkit-text-stroke 0.3s; }
         .marquee-item h3:hover { color: var(--text-pure); -webkit-text-stroke: 1px var(--text-pure); }
         .marquee-item .separator { color: var(--accent-primary); font-size: 30px; margin: 0 40px; font-family: 'JetBrains Mono', monospace; }
-        
-        .marquee-track.reverse { transform: translateX(-50%); }
 
         /* ==========================================================================
-           9. 3D SABER GLASS PORTFOLIO LAYOUT (With Velocity Skew)
+           9. 3D SABER GLASS PORTFOLIO LAYOUT 
            ========================================================================== */
         .portfolio-sections { padding: 15vh 10vw 25vh; display: flex; flex-direction: column; gap: 35vh; position: relative; }
         .spine-line { position: absolute; top: 0; left: 50%; width: 1px; height: 100%; background: linear-gradient(180deg, transparent, rgba(255,255,255,0.05), transparent); z-index: -1; transform: translateX(-50%); }
 
-        /* Velocity Skew Wrapper */
         .skew-elem { width: 100%; display: flex; align-items: center; perspective: 2000px; transform-origin: center center; }
         .section-block { width: 100%; display: flex; }
         .section-block.right { justify-content: flex-end; }
@@ -175,18 +166,30 @@
         .glass-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 30px; background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255,255,255,0.06), transparent 40%); z-index: -1; transition: opacity 0.6s; opacity: 0; pointer-events: none; }
         .glass-card:hover::before { opacity: 1; }
 
-        .cc-light-sweep { position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), rgba(255,255,255,0.4), rgba(255,255,255,0.1), transparent); transform: skewX(-30deg); z-index: 15; pointer-events: none; filter: blur(8px); }
-        .glass-card:hover .cc-light-sweep { animation: lightSweepAnim 1.2s cubic-bezier(0.19, 1, 0.22, 1); }
-        @keyframes lightSweepAnim { 0% { left: -100%; opacity: 0; } 50% { opacity: 1; } 100% { left: 200%; opacity: 0; } }
+        /* ---------------------------------------------------------
+           NEW: WHOLE-CONTAINER CC LIGHT SWEEP
+           --------------------------------------------------------- */
+        .cc-light-sweep { 
+            position: absolute; top: -50%; left: -100%; width: 50%; height: 200%; 
+            /* High-end metallic gradient */
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.05) 60%, rgba(255,255,255,0) 100%); 
+            transform: skewX(-25deg); 
+            z-index: 100; /* Moves it OVER the text and video */
+            pointer-events: none; 
+            mix-blend-mode: overlay; /* Creates the real glass glare effect */
+        }
+        .glass-card:hover .cc-light-sweep { animation: lightSweepAnim 1.5s cubic-bezier(0.19, 1, 0.22, 1); }
+        @keyframes lightSweepAnim { 0% { left: -100%; } 100% { left: 200%; } }
 
+        /* Saber Glow Border SVG */
         .saber-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; border-radius: 30px; }
         .saber-path { fill: none; stroke: var(--accent-primary); stroke-width: 2px; stroke-dasharray: 100; stroke-dashoffset: 100; filter: drop-shadow(0 0 10px var(--accent-primary)) drop-shadow(0 0 30px var(--accent-glow)); vector-effect: non-scaling-stroke; rx: 30px; transition: stroke-dashoffset 2.5s cubic-bezier(0.19, 1, 0.22, 1); }
         .glass-card.saber-active .saber-path { stroke-dashoffset: 0; }
 
         .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px; margin-bottom: 30px; transform: translateZ(40px); }
         .card-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--accent-primary); transition: text-shadow 0.3s; }
-        .card-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; }
         .glass-card.saber-active .card-num { text-shadow: 0 0 15px rgba(144,224,175,0.6); } 
+        .card-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; }
 
         .card-title { font-size: clamp(30px, 3vw, 48px); font-weight: 900; letter-spacing: -1px; margin-bottom: 20px; line-height: 1.1; transform: translateZ(60px); }
         .card-desc { font-size: 15px; color: var(--text-dim); line-height: 1.8; margin-bottom: 40px; font-weight: 400; transform: translateZ(50px); }
@@ -197,7 +200,7 @@
         .glass-card:hover .video-box video { filter: brightness(1.05) contrast(1.05) saturate(1.1); }
 
         /* ==========================================================================
-           10. THE LAB (Tech Stack Framework)
+           10. THE LAB & FOOTER
            ========================================================================== */
         .pipeline { padding: 15vh 10vw 25vh; position: relative; z-index: 10; border-top: 1px solid var(--glass-border); background: radial-gradient(circle at 50% 100%, rgba(144, 224, 175, 0.03) 0%, transparent 70%); }
         .section-header { text-align: center; margin-bottom: 12vh; position: relative; }
@@ -205,44 +208,28 @@
         .sh-large { font-size: clamp(50px, 7vw, 100px); font-weight: 900; text-transform: uppercase; letter-spacing: -3px; color: var(--text-pure); }
 
         .arsenal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3vw; }
-        
-        .tech-item {
-            padding: 5vw; background: rgba(255,255,255,0.01); border: 1px solid var(--glass-border); border-radius: 24px;
-            position: relative; overflow: hidden; transition: transform 0.6s var(--ease-apple), border-color 0.6s, box-shadow 0.6s;
-            display: flex; flex-direction: column; justify-content: space-between;
-        }
-        
-        /* Laser Scanline Effect on Tech Cards */
+        .tech-item { padding: 5vw; background: rgba(255,255,255,0.01); border: 1px solid var(--glass-border); border-radius: 24px; position: relative; overflow: hidden; transition: transform 0.6s var(--ease-apple), border-color 0.6s, box-shadow 0.6s; display: flex; flex-direction: column; justify-content: space-between; }
         .tech-item::after { content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 2px; background: var(--accent-primary); box-shadow: 0 0 20px var(--accent-glow); opacity: 0; transition: opacity 0.3s; }
         .tech-item:hover::after { opacity: 1; animation: laserScan 2s linear infinite; }
         @keyframes laserScan { 0% { top: -10%; } 100% { top: 110%; } }
-
         .tech-item:hover { transform: translateY(-15px) scale(1.02); border-color: rgba(144, 224, 175, 0.2); box-shadow: 0 40px 80px rgba(0,0,0,0.6); background: rgba(255,255,255,0.02); }
-        
         .tech-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; }
         .tech-icon { font-size: 24px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-weight: 800; border: 1px solid var(--glass-border); padding: 10px 15px; border-radius: 8px; transition: color 0.4s, border-color 0.4s; }
         .tech-item:hover .tech-icon { color: var(--accent-primary); border-color: rgba(144,224,175,0.3); }
         .tech-status { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent-primary); display: flex; align-items: center; gap: 8px; }
         .status-dot { width: 6px; height: 6px; background: var(--accent-primary); border-radius: 50%; box-shadow: 0 0 8px var(--accent-glow); animation: pulseDot 2s infinite; }
         @keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
         .tech-item h4 { font-size: clamp(24px, 2vw, 32px); font-weight: 900; margin-bottom: 15px; letter-spacing: -1px; }
         .tech-item p { font-size: 15px; color: var(--text-dim); line-height: 1.8; margin-bottom: 30px; font-weight: 400; }
         .tech-spec { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 10px 20px; background: #000; border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; display: inline-block; color: var(--text-bright); letter-spacing: 1px; }
 
-        /* ==========================================================================
-           11. STUDIO FOOTER
-           ========================================================================== */
         footer { padding: 15vh 6vw 5vh; border-top: 1px solid var(--glass-border); position: relative; overflow: hidden; background: #000; display: flex; flex-direction: column; justify-content: space-between; min-height: 80vh; }
         .footer-bg-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 22vw; font-weight: 900; line-height: 0.8; letter-spacing: -0.06em; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.02); text-align: center; user-select: none; z-index: 0; transition: -webkit-text-stroke 0.5s; white-space: nowrap; }
         footer:hover .footer-bg-text { -webkit-text-stroke: 1px rgba(144, 224, 175, 0.1); }
-        
         .footer-content { position: relative; z-index: 10; display: flex; flex-direction: column; justify-content: space-between; height: 100%; flex-grow: 1; }
-        
         .fc-top { display: flex; justify-content: space-between; align-items: flex-start; }
         .fc-cta h2 { font-size: clamp(40px, 4vw, 60px); font-weight: 900; margin-bottom: 20px; letter-spacing: -1px; }
         .fc-cta p { font-size: 16px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
-        
         .footer-bottom { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 40px; margin-top: auto; }
         .fb-left h3 { font-size: 20px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
         .fb-left p { color: var(--text-dim); font-size: 12px; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; }
@@ -251,9 +238,6 @@
         .social-link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: var(--accent-primary); transform: translateX(-101%); transition: transform 0.4s var(--ease-apple); }
         .social-link:hover::after { transform: translateX(0); }
 
-        /* ==========================================================================
-           12. RESPONSIVE MEDIA QUERIES
-           ========================================================================== */
         @media (max-width: 1024px) {
             .section-block { justify-content: center !important; }
             .glass-card { width: 100%; padding: 6vw; transform: none !important; } 
@@ -264,9 +248,6 @@
             * { cursor: auto; }
             .arsenal-grid { grid-template-columns: 1fr; }
             #hero-profile-pic { display: none; } 
-            .fc-top { flex-direction: column; gap: 40px; }
-            .footer-bottom { flex-direction: column; gap: 40px; align-items: flex-start; }
-            .marquee-item h3 { font-size: 30px; }
         }
     </style>
 </head>
@@ -290,13 +271,12 @@
 
     <div class="preloader">
         <div class="terminal-header">SANGRAM_SYS INITIALIZING...</div>
-        <div class="terminal-body" id="term-body">
-            </div>
+        <div class="terminal-body" id="term-body"></div>
         <div class="loader-math">000</div>
         <div class="loader-bar-bg"><div class="loader-bar-fill"></div></div>
     </div>
 
-    <img src="profile.jpg" id="hero-profile-pic" alt="Sangram Profile">
+    <img src="profile.jpg" onerror="this.src='photo.jpg'" id="hero-profile-pic" alt="Sangram Profile">
 
     <div class="model-container">
         <div class="model-floater">
@@ -374,7 +354,7 @@
                         <span class="card-num">// 001. VFX</span>
                         <span class="card-meta">After Effects</span>
                     </div>
-                    <h2 class="card-title split-lines">VFX Integration & Compositing</h2>
+                    <h2 class="card-title split-chars-dynamic">VFX Integration & Compositing</h2>
                     <p class="card-desc">Pushing the boundaries of raw footage. Advanced node and layer-based visual effects built to augment physical reality seamlessly.</p>
                     <div class="video-box"><video autoplay loop muted playsinline><source src="B1Meteor.mp4" type="video/mp4"></video></div>
                 </div>
@@ -392,7 +372,7 @@
                         <span class="card-num">// 002. LENS</span>
                         <span class="card-meta">Color Grade</span>
                     </div>
-                    <h2 class="card-title split-lines">Cinematic Lighting & Aesthetics</h2>
+                    <h2 class="card-title split-chars-dynamic">Cinematic Lighting & Aesthetics</h2>
                     <p class="card-desc">Emulating professional camera setups. Utilizing deep color grading and environmental mapping to craft movie-grade atmospheres.</p>
                     <div class="video-box"><video autoplay loop muted playsinline><source src="B2Beach.mp4" type="video/mp4"></video></div>
                 </div>
@@ -410,7 +390,7 @@
                         <span class="card-num">// 003. FLOW</span>
                         <span class="card-meta">Trend Sync</span>
                     </div>
-                    <h2 class="card-title split-lines">Trend Sync & Pacing</h2>
+                    <h2 class="card-title split-chars-dynamic">Trend Sync & Pacing</h2>
                         <p class="card-desc">High-impact editing calculated to hold retention. Driven by hyper-smooth transitions, speed ramping, and heavy audio rhythm synchronization.</p>
                     <div class="video-box"><video autoplay loop muted playsinline><source src="B3Tiki.mp4" type="video/mp4"></video></div>
                 </div>
@@ -428,7 +408,7 @@
                         <span class="card-num">// 004. TYPO</span>
                         <span class="card-meta">Design Sys</span>
                     </div>
-                    <h2 class="card-title split-lines">Kinetic Typographic Systems</h2>
+                    <h2 class="card-title split-chars-dynamic">Kinetic Typographic Systems</h2>
                     <p class="card-desc">Transforming static text into a physical element. Engineering fluid motion profiles that communicate style, hierarchy, and information simultaneously.</p>
                     <div class="video-box"><video autoplay loop muted playsinline><source src="B4Sngrm.mp4" type="video/mp4"></video></div>
                 </div>
@@ -443,40 +423,25 @@
         </div>
         <div class="arsenal-grid">
             <div class="tech-item magnetic-trigger">
-                <div class="tech-header">
-                    <div class="tech-icon">[AE]</div>
-                    <div class="tech-status"><div class="status-dot"></div> ONLINE</div>
-                </div>
+                <div class="tech-header"><div class="tech-icon">[AE]</div><div class="tech-status"><div class="status-dot"></div> ONLINE</div></div>
                 <h4>Core Compositing</h4>
                 <p>Heavy-duty timeline management, 3D camera mapping, and rendering executed within the industry standard post-production suite.</p>
                 <span class="tech-spec">AFTER EFFECTS CC</span>
             </div>
-            
             <div class="tech-item magnetic-trigger">
-                <div class="tech-header">
-                    <div class="tech-icon">[MOB]</div>
-                    <div class="tech-status"><div class="status-dot"></div> ONLINE</div>
-                </div>
+                <div class="tech-header"><div class="tech-icon">[MOB]</div><div class="tech-status"><div class="status-dot"></div> ONLINE</div></div>
                 <h4>Node Systems</h4>
                 <p>Rapid deployment editing and node-based compositing designed for high-end social formatting on the fly.</p>
                 <span class="tech-spec">NODE VIDEO / CAPCUT</span>
             </div>
-
             <div class="tech-item magnetic-trigger">
-                <div class="tech-header">
-                    <div class="tech-icon">[HW]</div>
-                    <div class="tech-status"><div class="status-dot"></div> OPTIMIZED</div>
-                </div>
+                <div class="tech-header"><div class="tech-icon">[HW]</div><div class="tech-status"><div class="status-dot"></div> OPTIMIZED</div></div>
                 <h4>Render Farm</h4>
                 <p>Custom-built desktop workstation configured to handle dense RAM previews, heavy cache loads, and multi-layered rendering.</p>
                 <span class="tech-spec">RYZEN 5 5600G / 8GB / B450M</span>
             </div>
-
             <div class="tech-item magnetic-trigger">
-                <div class="tech-header">
-                    <div class="tech-icon">[CAM]</div>
-                    <div class="tech-status"><div class="status-dot"></div> RECORDING</div>
-                </div>
+                <div class="tech-header"><div class="tech-icon">[CAM]</div><div class="tech-status"><div class="status-dot"></div> RECORDING</div></div>
                 <h4>Optical Matrix</h4>
                 <p>Shooting deep, flexible color profiles ready for intense post-production grading and AI-enhanced scaling.</p>
                 <span class="tech-spec">SAMSUNG S24 FE</span>
@@ -510,77 +475,48 @@
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // ---------------------------------------------------------
-        // 1. LENIS SMOOTH SCROLL INIT (With Velocity Tracker)
-        // ---------------------------------------------------------
-        const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), direction: 'vertical', smooth: true, mouseMultiplier: 1 });
-        
+        // 1. LENIS SMOOTH SCROLL
+        const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), direction: 'vertical', smooth: true });
         let scrollVelocity = 0;
         lenis.on('scroll', (e) => {
             ScrollTrigger.update();
             scrollVelocity = e.velocity;
-            
-            // HUD Updates
             document.getElementById('hud-scroll').innerText = Math.floor(e.scroll).toString().padStart(4, '0');
             const progress = (e.scroll / (document.body.scrollHeight - window.innerHeight)) * 100;
             document.querySelector('.scroll-progress-fill').style.height = `${progress}%`;
         });
-        
         gsap.ticker.add((time) => { lenis.raf(time * 1000); });
         gsap.ticker.lagSmoothing(0, 0);
-        lenis.stop(); // Lock scroll during preload
+        lenis.stop(); 
 
-        // ---------------------------------------------------------
-        // 2. HUD LOCAL CLOCK (India Standard Time)
-        // ---------------------------------------------------------
+        // 2. HUD LOCAL CLOCK 
         setInterval(() => {
             const timeStr = new Date().toLocaleTimeString("en-US", { timeZone: "Asia/Kolkata", hour12: false });
             document.getElementById('hud-time').innerText = timeStr;
         }, 1000);
 
-        // ---------------------------------------------------------
-        // 3. TERMINAL BOOT PRELOADER LOGIC
-        // ---------------------------------------------------------
+        // 3. TERMINAL BOOT
         const termBody = document.getElementById('term-body');
-        const termLines = [
-            "Connecting to local server...",
-            "Loading WebGL Renderer... OK",
-            "Fetching 3D Model: phoenix_bird.glb... OK",
-            "Compiling GLSL Shaders... OK",
-            "Allocating Video RAM... OK",
-            "Bypassing Security Protocols... [WARNING: IGNORED]",
-            "Initializing Main Sequence..."
-        ];
-        
+        const termLines = ["Connecting to local server...", "Loading WebGL Renderer... OK", "Fetching 3D Model: phoenix_bird.glb... OK", "Compiling GLSL Shaders... OK", "Allocating Video RAM... OK", "Initializing Main Sequence..."];
         const counterText = document.querySelector('.loader-math');
         const fillBar = document.querySelector('.loader-bar-fill');
-        let loadProgress = 0;
-        let lineIndex = 0;
+        let loadProgress = 0, lineIndex = 0;
 
-        // Simulate terminal typing
         let termInterval = setInterval(() => {
             if(lineIndex < termLines.length) {
-                let p = document.createElement('p');
-                p.className = 'terminal-line';
-                p.innerText = "> " + termLines[lineIndex];
-                termBody.appendChild(p);
-                gsap.to(p, {opacity: 1, duration: 0.2});
-                lineIndex++;
+                let p = document.createElement('p'); p.className = 'terminal-line'; p.innerText = "> " + termLines[lineIndex];
+                termBody.appendChild(p); gsap.to(p, {opacity: 1, duration: 0.2}); lineIndex++;
             }
         }, 400);
 
-        // Main loading bar
         let loaderInterval = setInterval(() => {
             loadProgress += Math.floor(Math.random() * 4) + 1; 
             if(loadProgress >= 100) loadProgress = 100;
-            
             counterText.innerText = loadProgress.toString().padStart(3, '0');
             fillBar.style.width = loadProgress + '%';
             
             if(loadProgress === 100) {
-                clearInterval(loaderInterval);
-                clearInterval(termInterval);
-                setTimeout(revealSite, 600);
+                clearInterval(loaderInterval); clearInterval(termInterval); setTimeout(revealSite, 600);
             }
         }, 40);
 
@@ -591,104 +527,68 @@
                     document.querySelector('.preloader').style.display = 'none';
                     lenis.start(); 
                     
-                    // REVEAL BIRD
                     gsap.to('.model-container', { opacity: 1, scale: 1, y: 0, duration: 2.5, ease: "power3.out" });
                     
-                    // REVEAL PROFILE PIC
+                    // REVEAL FIXED PROFILE PIC
                     gsap.to('#hero-profile-pic', { opacity: 1, duration: 1.5, ease: "power2.out" });
 
-                    // REVEAL TEXT
                     gsap.to('.hero-title .gsap-line', { y: '0%', duration: 1.2, stagger: 0.1, ease: "power4.out" });
                     gsap.to('.hero-tagline, .hero-name', { opacity: 1, duration: 1 }, "-=0.8");
                 }
             });
         }
 
-        // ---------------------------------------------------------
-        // 4. PROFILE PIC & CC LIGHT SWEEP GSAP TIMELINES
-        // ---------------------------------------------------------
-        gsap.set("#hero-profile-pic", { top: "35vh", left: "50vw", xPercent: -50, yPercent: -50, width: "180px", height: "180px" });
+        // 4. FIXED PROFILE PIC FLY-AWAY & CC LIGHT SWEEP GSAP
+        // Set Profile pic perfectly in the center, directly above the name
+        gsap.set("#hero-profile-pic", { top: "40vh", left: "50vw", xPercent: -50, yPercent: -50, width: "160px", height: "160px" });
         
+        // As you scroll, the name stays with the page, the profile pic flies to the Nav Bar Logo spot
         gsap.to("#hero-profile-pic", {
-            scrollTrigger: { trigger: "body", start: "top top", end: "300px top", scrub: 1 },
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 },
             top: "40px", left: "6vw", xPercent: 0, yPercent: 0, width: "50px", height: "50px",
             ease: "power2.inOut"
         });
 
         gsap.to(".hero-name", {
-            scrollTrigger: { trigger: "body", start: "top top", end: "400px top", scrub: 1 },
+            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 },
             backgroundPosition: "-100% center", ease: "none"
         });
 
-        // ---------------------------------------------------------
         // 5. CONSTELLATION FLUID CANVAS ENGINE
-        // ---------------------------------------------------------
         const canvas = document.getElementById('ambient-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-
-        let particlesArray = [];
-        let mouse = { x: null, y: null, radius: 200 };
+        let particlesArray = []; let mouse = { x: null, y: null, radius: 200 };
         window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
-
         class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 1;
-                this.speedX = Math.random() * 0.5 - 0.25; this.speedY = Math.random() * 0.5 - 0.25;
-            }
+            constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 2 + 1; this.speedX = Math.random() * 0.5 - 0.25; this.speedY = Math.random() * 0.5 - 0.25; }
             update() {
                 this.x += this.speedX; this.y += this.speedY;
-                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-                
-                // Mouse Collision & Parallax
-                if(mouse.x) {
-                    let dx = mouse.x - this.x; let dy = mouse.y - this.y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-                    if(distance < mouse.radius) { this.x -= dx * 0.01; this.y -= dy * 0.01; }
-                }
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1; if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                if(mouse.x) { let dx = mouse.x - this.x; let dy = mouse.y - this.y; let distance = Math.sqrt(dx * dx + dy * dy); if(distance < mouse.radius) { this.x -= dx * 0.01; this.y -= dy * 0.01; } }
             }
-            draw() {
-                ctx.fillStyle = 'rgba(144, 224, 175, 0.5)';
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
-            }
+            draw() { ctx.fillStyle = 'rgba(144, 224, 175, 0.5)'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
         }
-        
         function initParticles() { for (let i = 0; i < 120; i++) { particlesArray.push(new Particle()); } }
-        
         function connectParticles() {
             let opacityValue = 1;
             for (let a = 0; a < particlesArray.length; a++) {
                 for (let b = a; b < particlesArray.length; b++) {
-                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x)) + 
-                                   ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x)) + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
                     if (distance < (canvas.width / 10) * (canvas.height / 10)) {
-                        opacityValue = 1 - (distance / 20000);
-                        ctx.strokeStyle = `rgba(144, 224, 175, ${opacityValue * 0.2})`;
-                        ctx.lineWidth = 1;
-                        ctx.beginPath(); ctx.moveTo(particlesArray[a].x, particlesArray[a].y); ctx.lineTo(particlesArray[b].x, particlesArray[b].y); ctx.stroke();
+                        opacityValue = 1 - (distance / 20000); ctx.strokeStyle = `rgba(144, 224, 175, ${opacityValue * 0.2})`; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(particlesArray[a].x, particlesArray[a].y); ctx.lineTo(particlesArray[b].x, particlesArray[b].y); ctx.stroke();
                     }
                 }
             }
         }
-
-        function animateCanvas() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < particlesArray.length; i++) { particlesArray[i].update(); particlesArray[i].draw(); }
-            connectParticles();
-            requestAnimationFrame(animateCanvas);
-        }
+        function animateCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); for (let i = 0; i < particlesArray.length; i++) { particlesArray[i].update(); particlesArray[i].draw(); } connectParticles(); requestAnimationFrame(animateCanvas); }
         initParticles(); animateCanvas();
         window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
-        // ---------------------------------------------------------
         // 6. APPLE TV 3D TILT ENGINE
-        // ---------------------------------------------------------
         document.querySelectorAll('.tilt-card').forEach(card => {
             card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+                const rect = card.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
                 card.style.setProperty('--mouse-x', `${x}px`); card.style.setProperty('--mouse-y', `${y}px`);
                 const xPct = (x / rect.width - 0.5) * 2; const yPct = (y / rect.height - 0.5) * 2; 
                 gsap.to(card, { rotationX: -yPct * 8, rotationY: xPct * 8, ease: "power2.out", duration: 0.5 });
@@ -696,35 +596,38 @@
             card.addEventListener('mouseleave', () => { gsap.to(card, { rotationX: 0, rotationY: 0, ease: "elastic.out(1, 0.4)", duration: 1.5 }); });
         });
 
-        // ---------------------------------------------------------
         // 7. MAGNETIC CURSOR & UI LINKS
-        // ---------------------------------------------------------
         let xToDot = gsap.quickTo(".cursor-dot", "x", {duration: 0.1, ease: "power3"});
         let yToDot = gsap.quickTo(".cursor-dot", "y", {duration: 0.1, ease: "power3"});
         let xToRing = gsap.quickTo(".cursor-ring", "x", {duration: 0.4, ease: "power3"});
         let yToRing = gsap.quickTo(".cursor-ring", "y", {duration: 0.4, ease: "power3"});
-
         window.addEventListener("mousemove", (e) => { xToDot(e.clientX); yToDot(e.clientY); xToRing(e.clientX); yToRing(e.clientY); });
-
+        
         document.querySelectorAll('a, .magnetic-trigger').forEach(el => {
             el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
             el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
         });
-
         document.querySelectorAll('.magnetic-wrap').forEach(wrap => {
             const elem = wrap.querySelector('.magnetic-elem');
             wrap.addEventListener('mousemove', (e) => {
                 const rect = wrap.getBoundingClientRect();
-                const dx = (e.clientX - (rect.left + rect.width / 2)) * 0.4; 
-                const dy = (e.clientY - (rect.top + rect.height / 2)) * 0.4;
+                const dx = (e.clientX - (rect.left + rect.width / 2)) * 0.4; const dy = (e.clientY - (rect.top + rect.height / 2)) * 0.4;
                 gsap.to(elem, { x: dx, y: dy, duration: 0.4, ease: "power3.out" });
             });
             wrap.addEventListener('mouseleave', () => { gsap.to(elem, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.4)" }); });
         });
 
-        // ---------------------------------------------------------
-        // 8. DYNAMIC TEXT SPLITTING
-        // ---------------------------------------------------------
+        // 8. NEW: CHARACTER-BY-CHARACTER KINETIC TEXT ENGINE
+        document.querySelectorAll('.split-chars-dynamic').forEach(el => {
+            let text = el.innerText; el.innerHTML = '';
+            for(let i=0; i<text.length; i++){
+                let char = text[i] === ' ' ? '&nbsp;' : text[i];
+                let wrapper = document.createElement('span'); wrapper.style.overflow = 'hidden'; wrapper.style.display = 'inline-block';
+                let inner = document.createElement('span'); inner.innerHTML = char; inner.style.transform = 'translateY(110%)'; inner.style.display = 'inline-block'; inner.classList.add('gsap-char');
+                wrapper.appendChild(inner); el.appendChild(wrapper);
+            }
+        });
+
         document.querySelectorAll('.split-lines').forEach(el => {
             let text = el.innerText; el.innerHTML = '';
             let wrapper = document.createElement('div'); wrapper.style.overflow = 'hidden'; wrapper.style.display = 'inline-block';
@@ -732,21 +635,14 @@
             wrapper.appendChild(inner); el.appendChild(wrapper);
         });
 
-        // ---------------------------------------------------------
         // 9. ADVANCED SCROLLTRIGGERS (Velocity Skew, Marquee, Saber)
-        // ---------------------------------------------------------
-        // Infinite Marquee
         gsap.to(".track-1", { xPercent: -50, ease: "none", scrollTrigger: { trigger: ".marquee-section", start: "top bottom", end: "bottom top", scrub: 1 } });
         gsap.to(".track-2", { xPercent: 50, ease: "none", scrollTrigger: { trigger: ".marquee-section", start: "top bottom", end: "bottom top", scrub: 1 } });
 
-        // Scroll Velocity Skewing on Portfolio Cards
         const skewElems = document.querySelectorAll('.skew-elem');
         gsap.ticker.add(() => {
-            // Apply a slight rotationX based on Lenis scroll velocity
             const skewAmount = scrollVelocity * 0.15; 
-            skewElems.forEach(elem => {
-                gsap.to(elem, { rotationX: skewAmount, duration: 0.2, ease: "power2.out", overwrite: true });
-            });
+            skewElems.forEach(elem => { gsap.to(elem, { rotationX: skewAmount, duration: 0.2, ease: "power2.out", overwrite: true }); });
         });
 
         document.querySelectorAll('.section-block').forEach((sec) => {
@@ -754,23 +650,22 @@
             if(bgColor) {
                 ScrollTrigger.create({ trigger: sec, start: "top 50%", end: "bottom 50%", onEnter: () => gsap.to("body", { backgroundColor: bgColor, duration: 1.5 }), onEnterBack: () => gsap.to("body", { backgroundColor: bgColor, duration: 1.5 }) });
             }
-            gsap.to(sec.querySelectorAll('.gsap-line'), { scrollTrigger: { trigger: sec, start: "top 80%" }, y: '0%', duration: 1, stagger: 0.1, ease: "power4.out" });
-
-            // Fire Saber Glow Border
+            
+            // Trigger letter-by-letter animation on titles
+            gsap.to(sec.querySelectorAll('.gsap-char'), { scrollTrigger: { trigger: sec, start: "top 75%" }, y: '0%', duration: 0.8, stagger: 0.02, ease: "power4.out" });
+            
+            // Trigger Saber Border
             ScrollTrigger.create({ trigger: sec, start: "top 60%", onEnter: () => { sec.querySelector('.glass-card').classList.add('saber-active'); } });
         });
 
         gsap.to(document.querySelectorAll('.sh-large .gsap-line'), { scrollTrigger: { trigger: '#arsenal', start: "top 80%" }, y: '0%', duration: 1, ease: "power4.out" });
 
-        // ---------------------------------------------------------
         // 10. THE MASTER 3D FLIGHT PATH
-        // ---------------------------------------------------------
         const modelEl = document.getElementById('phoenix-model');
         const rot = { pitch: 0, yaw: 0, roll: 0 }; 
         const updateModel3D = () => { if(modelEl.setAttribute) modelEl.setAttribute('orientation', `${rot.pitch}deg ${rot.yaw}deg ${rot.roll}deg`); };
 
         let flightPath = gsap.timeline({ scrollTrigger: { trigger: "#work", start: "top 90%", endTrigger: "#arsenal", end: "top 40%", scrub: 2.5 } });
-
         flightPath.to(".model-container", { x: "45vw", y: "15vh", scale: 1.2, ease: "sine.inOut" }, "f1")
           .to(rot, { pitch: 15, yaw: 25, roll: -20, onUpdate: updateModel3D, ease: "sine.inOut" }, "f1")
         .to(".model-container", { x: "10vw", y: "40vh", scale: 0.9, ease: "sine.inOut" }, "f2")
@@ -785,3 +680,4 @@
     </script>
 </body>
 </html>
+
