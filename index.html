@@ -365,31 +365,35 @@
                     </a>
                 </div>
             </div>
-            <div class="flex justify-between items-end border-t border-[rgba(255,255,255,0.1)] pt-10 mt-auto flex-wrap gap-10">
-                <div class="text-left">
+            
+            <div class="flex flex-col md:flex-row justify-between items-center border-t border-[rgba(255,255,255,0.1)] pt-10 mt-auto gap-8">
+                <div class="text-center md:text-left w-full md:w-auto">
                     <h3 class="text-[20px] font-extrabold tracking-widest uppercase mb-3">Sangram Keshari Gartia</h3>
                     <p class="text-gray-500 text-[12px] font-mono tracking-widest">SYSTEM STATUS: RENDER COMPLETE // CRAFTED WITH LOGIC AND LIGHT</p>
                 </div>
                 
-                <div class="flex gap-4">
-                    <div class="magnetic-wrap" style="padding: 10px;">
-                        <a href="https://www.youtube.com/@SangramOfficial" target="_blank" title="YouTube" class="w-12 h-12 rounded-full border border-[rgba(255,255,255,0.1)] flex items-center justify-center bg-[rgba(255,255,255,0.02)] hover:bg-[#00d2ff] hover:border-transparent hover:shadow-[0_0_20px_rgba(0,210,255,0.5)] transition-all duration-300 magnetic-elem group">
-                            <i class="fa-brands fa-youtube text-white text-xl group-hover:text-black transition-colors"></i>
+                <div class="flex justify-center gap-6 items-center w-full md:w-auto">
+                    <div class="magnetic-wrap" style="padding: 5px;">
+                        <a href="https://www.youtube.com/@SangramOfficial" target="_blank" title="YouTube" 
+                           class="w-14 h-14 rounded-full border border-[rgba(255,255,255,0.1)] flex items-center justify-center bg-[rgba(255,255,255,0.02)] hover:bg-[#FF0000] hover:border-transparent hover:shadow-[0_0_25px_rgba(255,0,0,0.5)] transition-all duration-300 magnetic-elem group">
+                            <i class="fa-brands fa-youtube text-white text-2xl group-hover:scale-110 transition-transform"></i>
                         </a>
                     </div>
-                    <div class="magnetic-wrap" style="padding: 10px;">
-                        <a href="https://www.instagram.com/sngrm.fx" target="_blank" title="Instagram" class="w-12 h-12 rounded-full border border-[rgba(255,255,255,0.1)] flex items-center justify-center bg-[rgba(255,255,255,0.02)] hover:bg-[#00d2ff] hover:border-transparent hover:shadow-[0_0_20px_rgba(0,210,255,0.5)] transition-all duration-300 magnetic-elem group">
-                            <i class="fa-brands fa-instagram text-white text-xl group-hover:text-black transition-colors"></i>
+                    <div class="magnetic-wrap" style="padding: 5px;">
+                        <a href="https://www.instagram.com/sngrm.fx" target="_blank" title="Instagram" 
+                           class="w-14 h-14 rounded-full border border-[rgba(255,255,255,0.1)] flex items-center justify-center bg-[rgba(255,255,255,0.02)] hover:bg-gradient-to-tr hover:from-[#f9ce34] hover:via-[#ee2a7b] hover:to-[#6228d7] hover:border-transparent hover:shadow-[0_0_25px_rgba(238,42,123,0.5)] transition-all duration-300 magnetic-elem group">
+                            <i class="fa-brands fa-instagram text-white text-2xl group-hover:scale-110 transition-transform"></i>
                         </a>
                     </div>
-                    <div class="magnetic-wrap" style="padding: 10px;">
-                        <a href="https://discord.com/invite/kKM75jmQwu" target="_blank" title="Discord" class="w-12 h-12 rounded-full border border-[rgba(255,255,255,0.1)] flex items-center justify-center bg-[rgba(255,255,255,0.02)] hover:bg-[#00d2ff] hover:border-transparent hover:shadow-[0_0_20px_rgba(0,210,255,0.5)] transition-all duration-300 magnetic-elem group">
-                            <i class="fa-brands fa-discord text-white text-xl group-hover:text-black transition-colors"></i>
+                    <div class="magnetic-wrap" style="padding: 5px;">
+                        <a href="https://discord.com/invite/kKM75jmQwu" target="_blank" title="Discord" 
+                           class="w-14 h-14 rounded-full border border-[rgba(255,255,255,0.1)] flex items-center justify-center bg-[rgba(255,255,255,0.02)] hover:bg-[#5865F2] hover:border-transparent hover:shadow-[0_0_25px_rgba(88,101,242,0.5)] transition-all duration-300 magnetic-elem group">
+                            <i class="fa-brands fa-discord text-white text-2xl group-hover:scale-110 transition-transform"></i>
                         </a>
                     </div>
                 </div>
             </div>
-        </div>
+            </div>
     </footer>
 
     <script>
@@ -457,15 +461,15 @@
         }
 
         // 4. FIXED PROFILE PIC PARALLAX
-        // Scrub increased to 1.5 for smoother, slower "Apple-like" delay
+        // Changed scrub to 0.2 for higher intensity snapping
         gsap.set("#hero-profile-pic", { top: "28vh", left: "50vw", xPercent: -50, yPercent: -50, width: "160px", height: "160px" });
         gsap.to("#hero-profile-pic", {
-            scrollTrigger: { trigger: "body", start: "top top", end: "300px top", scrub: 1.5 },
+            scrollTrigger: { trigger: "body", start: "top top", end: "300px top", scrub: 0.2 },
             top: "40px", left: "6vw", xPercent: 0, yPercent: 0, width: "50px", height: "50px",
             ease: "power2.inOut"
         });
         gsap.to(".hero-name", {
-            scrollTrigger: { trigger: "body", start: "top top", end: "500px top", scrub: 1.5 },
+            scrollTrigger: { trigger: "body", start: "top top", end: "500px top", scrub: 0.2 },
             backgroundPosition: "-50% center", ease: "none"
         });
 
@@ -564,70 +568,28 @@
             });
         });
 
-        // Using explicit `fromTo` & custom events for independent reverse speed & early triggering
         // Slide Left animations
         document.querySelectorAll('.slide-left').forEach(el => {
-            let anim = gsap.fromTo(el, 
-                { x: -120, opacity: 0 }, 
-                { x: 0, opacity: 1, duration: 1.2, ease: "power3.out", paused: true }
-            );
-            ScrollTrigger.create({ 
-                trigger: el, 
-                start: "top 85%", 
-                end: "top 60%", // Earlier trigger for reverse going up
-                onEnter: () => anim.timeScale(1).play(), // Normal speed forward
-                onEnterBack: () => anim.timeScale(2.5).reverse(), // Fast & early reverse
-                onLeaveBack: () => anim.timeScale(2.5).reverse() // Fallback safety
-            });
+            gsap.from(el, { x: -120, opacity: 0, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none reverse" } });
         });
 
         // Slide Right animations
         document.querySelectorAll('.slide-right').forEach(el => {
-            let anim = gsap.fromTo(el, 
-                { x: 120, opacity: 0 }, 
-                { x: 0, opacity: 1, duration: 1.2, ease: "power3.out", paused: true }
-            );
-            ScrollTrigger.create({ 
-                trigger: el, 
-                start: "top 85%", 
-                end: "top 60%",
-                onEnter: () => anim.timeScale(1).play(),
-                onEnterBack: () => anim.timeScale(2.5).reverse(),
-                onLeaveBack: () => anim.timeScale(2.5).reverse()
-            });
+            gsap.from(el, { x: 120, opacity: 0, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none reverse" } });
         });
 
         // Slide Up animations
         document.querySelectorAll('.slide-up').forEach(el => {
-            let anim = gsap.fromTo(el, 
-                { y: 100, opacity: 0 }, 
-                { y: 0, opacity: 1, duration: 1.2, ease: "power3.out", paused: true }
-            );
-            ScrollTrigger.create({ 
-                trigger: el, 
-                start: "top 85%", 
-                end: "top 60%",
-                onEnter: () => anim.timeScale(1).play(),
-                onEnterBack: () => anim.timeScale(2.5).reverse(),
-                onLeaveBack: () => anim.timeScale(2.5).reverse()
-            });
+            gsap.from(el, { y: 100, opacity: 0, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none reverse" } });
         });
 
         // Character Stagger inside containers
         document.querySelectorAll('.glass-card, .slide-up, .about-text').forEach((card) => {
             const chars = card.querySelectorAll('.gsap-char');
             if(chars.length) {
-                let charAnim = gsap.fromTo(chars, 
-                    { y: '110%', opacity: 0 },
-                    { y: '0%', opacity: 1, duration: 0.8, stagger: 0.02, ease: "back.out(1.5)", paused: true }
-                );
-                ScrollTrigger.create({ 
-                    trigger: card, 
-                    start: "top 85%", 
-                    end: "top 60%",
-                    onEnter: () => charAnim.timeScale(1).play(),
-                    onEnterBack: () => charAnim.timeScale(2.5).reverse(),
-                    onLeaveBack: () => charAnim.timeScale(2.5).reverse()
+                gsap.to(chars, { 
+                    scrollTrigger: { trigger: card, start: "top 85%", toggleActions: "play none none reverse" }, 
+                    y: '0%', opacity: 1, duration: 0.8, stagger: 0.02, ease: "back.out(1.5)" 
                 });
             }
             
@@ -635,13 +597,11 @@
             ScrollTrigger.create({ 
                 trigger: card, 
                 start: "top 70%", 
-                end: "top 50%", 
                 onEnter: () => card.classList.add('saber-active'),
-                onEnterBack: () => card.classList.remove('saber-active'),
                 onLeaveBack: () => card.classList.remove('saber-active')
             });
             
-            // Glare Sweep Trigger 
+            // Glare Sweep Trigger (Changed scrub to 0.2)
             const sweepElement = card.querySelector('.cc-light-sweep');
             if (sweepElement) {
                 gsap.to(sweepElement, { scrollTrigger: { trigger: card, start: "top bottom", end: "bottom top", scrub: 0.2 }, left: "200%", ease: "none" });
@@ -649,6 +609,7 @@
         });
 
         // 10. 3D MODELS SCROLL ROTATION
+        // Changed scrub to 0.2 for snappier 3D object rotation
         const model3Ds = document.querySelectorAll('.model-3d-wrap model-viewer');
         const scrollObj = { rotY: 0 };
         gsap.to(scrollObj, {
@@ -665,4 +626,3 @@
     </script>
 </body>
 </html>
-
