@@ -186,28 +186,27 @@
         .glass-card:hover::before { opacity: 1; }
 
         /* ---------------------------------------------------------
-           NEW: AGGRESSIVE, SHARP METALLIC GLARE (Reference Matched)
+           UPDATED: SHARP METALLIC GLARE (Mix-Blend-Mode Screen)
            --------------------------------------------------------- */
         .cc-light-sweep { 
-            position: absolute; top: -50%; left: -100%; width: 120%; height: 200%; 
-            /* Sharp, highly-opaque white core to match the reference image */
+            position: absolute; top: -50%; left: -150%; width: 150%; height: 200%; 
+            /* Creates a sharp, pure white core that mimics physical glass reflection */
             background: linear-gradient(
                 to right, 
                 rgba(255, 255, 255, 0) 0%, 
-                rgba(255, 255, 255, 0) 40%, 
-                rgba(255, 255, 255, 0.4) 47%, 
-                rgba(255, 255, 255, 1) 50%, /* Solid bright core */
-                rgba(255, 255, 255, 0.4) 53%, 
-                rgba(255, 255, 255, 0) 60%, 
+                rgba(255, 255, 255, 0.05) 40%, 
+                rgba(255, 255, 255, 0.5) 48%, 
+                rgba(255, 255, 255, 1) 50%, 
+                rgba(255, 255, 255, 0.5) 52%, 
+                rgba(255, 255, 255, 0.05) 60%, 
                 rgba(255, 255, 255, 0) 100%
             );
             transform: skewX(-25deg); 
-            z-index: 100; /* ABOVE text and video */
+            z-index: 100; 
             pointer-events: none; 
-            /* Overlay burns the bright white into the dark background beneath it */
-            mix-blend-mode: overlay; 
+            /* Screen prevents the white from becoming dark/muddy on dark backgrounds */
+            mix-blend-mode: screen; 
         }
-        /* No CSS Hover animations. Glare is purely scroll-driven by GSAP */
 
         .saber-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; border-radius: 30px; }
         .saber-path { fill: none; stroke: var(--accent-primary); stroke-width: 2px; stroke-dasharray: 100; stroke-dashoffset: 100; filter: drop-shadow(0 0 10px var(--accent-primary)) drop-shadow(0 0 30px var(--accent-glow)); vector-effect: non-scaling-stroke; rx: 30px; transition: stroke-dashoffset 3s var(--ease-fluid); }
@@ -240,15 +239,15 @@
         .tech-item:hover::after { opacity: 1; animation: laserScan 2s linear infinite; }
         @keyframes laserScan { 0% { top: -10%; } 100% { top: 110%; } }
         .tech-item:hover { transform: translateY(-15px) scale(1.02); border-color: rgba(144, 224, 175, 0.2); box-shadow: 0 40px 80px rgba(0,0,0,0.6); background: rgba(255,255,255,0.02); }
-        .tech-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; }
+        .tech-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; position: relative; z-index: 2; }
         .tech-icon { font-size: 24px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-weight: 800; border: 1px solid var(--glass-border); padding: 10px 15px; border-radius: 8px; transition: color 0.4s, border-color 0.4s; }
         .tech-item:hover .tech-icon { color: var(--accent-primary); border-color: rgba(144,224,175,0.3); }
         .tech-status { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent-primary); display: flex; align-items: center; gap: 8px; }
         .status-dot { width: 6px; height: 6px; background: var(--accent-primary); border-radius: 50%; box-shadow: 0 0 8px var(--accent-glow); animation: pulseDot 2s infinite; }
         @keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .tech-item h4 { font-size: clamp(24px, 2vw, 32px); font-weight: 900; margin-bottom: 15px; letter-spacing: -1px; }
-        .tech-item p { font-size: 15px; color: var(--text-dim); line-height: 1.8; margin-bottom: 30px; font-weight: 400; }
-        .tech-spec { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 10px 20px; background: #000; border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; display: inline-block; color: var(--text-bright); letter-spacing: 1px; }
+        .tech-item h4 { font-size: clamp(24px, 2vw, 32px); font-weight: 900; margin-bottom: 15px; letter-spacing: -1px; position: relative; z-index: 2;}
+        .tech-item p { font-size: 15px; color: var(--text-dim); line-height: 1.8; margin-bottom: 30px; font-weight: 400; position: relative; z-index: 2;}
+        .tech-spec { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 10px 20px; background: #000; border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; display: inline-block; color: var(--text-bright); letter-spacing: 1px; position: relative; z-index: 2; align-self: flex-start;}
 
         footer { padding: 15vh 6vw 5vh; border-top: 1px solid var(--glass-border); position: relative; overflow: hidden; background: #000; display: flex; flex-direction: column; justify-content: space-between; min-height: 80vh; }
         .footer-bg-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 22vw; font-weight: 900; line-height: 0.8; letter-spacing: -0.06em; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.02); text-align: center; user-select: none; z-index: 0; transition: -webkit-text-stroke 0.5s; white-space: nowrap; }
@@ -445,24 +444,28 @@
         </div>
         <div class="arsenal-grid">
             <div class="tech-item magnetic-trigger">
+                <div class="cc-light-sweep"></div>
                 <div class="tech-header"><div class="tech-icon">[AE]</div><div class="tech-status"><div class="status-dot"></div> ONLINE</div></div>
                 <h4>Core Compositing</h4>
                 <p>Heavy-duty timeline management, 3D camera mapping, and rendering executed within the industry standard post-production suite.</p>
                 <span class="tech-spec">AFTER EFFECTS CC</span>
             </div>
             <div class="tech-item magnetic-trigger">
+                <div class="cc-light-sweep"></div>
                 <div class="tech-header"><div class="tech-icon">[MOB]</div><div class="tech-status"><div class="status-dot"></div> ONLINE</div></div>
                 <h4>Node Systems</h4>
                 <p>Rapid deployment editing and node-based compositing designed for high-end social formatting on the fly.</p>
                 <span class="tech-spec">NODE VIDEO / CAPCUT</span>
             </div>
             <div class="tech-item magnetic-trigger">
+                <div class="cc-light-sweep"></div>
                 <div class="tech-header"><div class="tech-icon">[HW]</div><div class="tech-status"><div class="status-dot"></div> OPTIMIZED</div></div>
                 <h4>Render Farm</h4>
                 <p>Custom-built desktop workstation configured to handle dense RAM previews, heavy cache loads, and multi-layered rendering.</p>
                 <span class="tech-spec">RYZEN 5 5600G / 8GB / B450M</span>
             </div>
             <div class="tech-item magnetic-trigger">
+                <div class="cc-light-sweep"></div>
                 <div class="tech-header"><div class="tech-icon">[CAM]</div><div class="tech-status"><div class="status-dot"></div> RECORDING</div></div>
                 <h4>Optical Matrix</h4>
                 <p>Shooting deep, flexible color profiles ready for intense post-production grading and AI-enhanced scaling.</p>
@@ -552,15 +555,12 @@
                 }
             });
             
-            // Explicitly force Profile Pic opacity to 1 immediately
             gsap.to('#hero-profile-pic', { opacity: 1, duration: 1.5, ease: "power2.out", delay: 0.5 });
-            
-            // Character by Character reveal for SNGRM
-            gsap.to('.hero-name', { opacity: 1, duration: 0.1, delay: 0.5 }); // Ensure container is visible
+            gsap.to('.hero-name', { opacity: 1, duration: 0.1, delay: 0.5 });
             gsap.to('.hero-name .gsap-char', { y: '0%', duration: 1.5, stagger: 0.05, ease: "power4.out", delay: 0.6 });
         }
 
-        // 4. CHARACTER SPLICING ENGINE (Must run BEFORE scroll triggers)
+        // 4. CHARACTER SPLICING ENGINE
         document.querySelectorAll('.split-chars-dynamic').forEach(el => {
             let text = el.innerText; el.innerHTML = '';
             for(let i=0; i<text.length; i++){
@@ -579,7 +579,7 @@
             wrapper.appendChild(inner); el.appendChild(wrapper);
         });
 
-        // 5. FIXED PROFILE PIC PARALLAX & HERO SCROLL LIGHT SWEEP
+        // 5. FIXED PROFILE PIC PARALLAX & HERO SCROLL
         gsap.set("#hero-profile-pic", { top: "35vh", left: "50vw", xPercent: -50, yPercent: -50, width: "160px", height: "160px" });
         
         gsap.to("#hero-profile-pic", {
@@ -666,30 +666,29 @@
             skewElems.forEach(elem => { gsap.to(elem, { rotationX: skewAmount, duration: 0.2, ease: "power2.out", overwrite: true }); });
         });
 
-        // Card Scroll Animations & Sharp Glare sweeps
+        // Apply text reveal animations to Portfolio Cards
         document.querySelectorAll('.section-block').forEach((sec) => {
             let bgColor = sec.getAttribute('data-bgcolor');
             if(bgColor) {
                 ScrollTrigger.create({ trigger: sec, start: "top 50%", end: "bottom 50%", onEnter: () => gsap.to("body", { backgroundColor: bgColor, duration: 1.5 }), onEnterBack: () => gsap.to("body", { backgroundColor: bgColor, duration: 1.5 }) });
             }
-            
-            // Slow, cinematic letter reveal
             gsap.to(sec.querySelectorAll('.gsap-char'), { scrollTrigger: { trigger: sec, start: "top 75%" }, y: '0%', duration: 1.5, stagger: 0.04, ease: "power4.out" });
             gsap.to(sec.querySelectorAll('.gsap-line'), { scrollTrigger: { trigger: sec, start: "top 75%" }, y: '0%', duration: 1.5, stagger: 0.1, ease: "power4.out", delay: 0.2 });
-            
             ScrollTrigger.create({ trigger: sec, start: "top 60%", onEnter: () => { sec.querySelector('.glass-card').classList.add('saber-active'); } });
+        });
 
-            // SCROLL-SYNCED SHARP GLARE OVER THE CARDS
-            const sweepElement = sec.querySelector('.cc-light-sweep');
+        // UNIVERSAL GLARE SWEEP: Applies to both Portfolio (.glass-card) and Lab (.tech-item) boxes
+        document.querySelectorAll('.glass-card, .tech-item').forEach((container) => {
+            const sweepElement = container.querySelector('.cc-light-sweep');
             if (sweepElement) {
                 gsap.to(sweepElement, {
                     scrollTrigger: {
-                        trigger: sec,
+                        trigger: container,
                         start: "top bottom", 
                         end: "bottom top",    
                         scrub: 1              
                     },
-                    left: "200%", // Wipes aggressively across the card
+                    left: "150%", // Wipes completely across the container
                     ease: "none"
                 });
             }
@@ -717,4 +716,3 @@
     </script>
 </body>
 </html>
-
