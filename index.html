@@ -6,212 +6,119 @@
     <title>Sangram | Elite Motion & VFX Studio</title>
     
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
 
     <style>
         /* ==========================================================================
-           1. ROOT VARIABLES, TYPOGRAPHY & CSS RESET
+           1. ROOT VARIABLES & CSS RESET
            ========================================================================== */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap');
 
         :root {
-            /* Core Backgrounds */
-            --bg-deep: #020408;
-            --bg-mid: #0A101C;
-            --bg-highlight: #111D32;
-            
-            /* The Arsenal Accents */
-            --accent-primary: #90E0AF;     /* Soft Mint/Cyan Glow */
-            --accent-glow: rgba(144, 224, 175, 0.8);
-            --accent-secondary: #4A88D9;   /* Deep Ocean Blue */
-            
-            /* Text Hierarchy */
-            --text-pure: #FFFFFF;
-            --text-bright: rgba(255, 255, 255, 0.9);
-            --text-dim: rgba(255, 255, 255, 0.55);
-            --text-dark: #020408;
-            
-            /* Glassmorphism Specs */
-            --glass-bg: rgba(255, 255, 255, 0.015);
+            --bg-deep: #020408; --bg-mid: #0A101C;
+            --accent-primary: #90E0AF; --accent-glow: rgba(144, 224, 175, 0.8);
+            --text-pure: #FFFFFF; --text-dim: rgba(255, 255, 255, 0.55);
             --glass-border: rgba(255, 255, 255, 0.04);
-            
-            /* Cinematic Easing (After Effects Easy Ease approximations) */
             --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
-            --ease-snappy: cubic-bezier(0.85, 0, 0.15, 1);
-            --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        /* Hard Reset & Global Definitions */
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
         
-        /* Lenis Framework Requirements */
         html.lenis { height: auto; }
         .lenis.lenis-smooth { scroll-behavior: auto; }
         .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
         .lenis.lenis-stopped { overflow: hidden; }
 
         body {
-            background-color: var(--bg-deep);
-            color: var(--text-pure);
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
+            background-color: var(--bg-deep); color: var(--text-pure);
+            font-family: 'Inter', sans-serif; overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
             transition: background-color 1.2s var(--ease-apple);
         }
 
-        /* Typography Utilities */
-        h1, h2, h3, h4, h5, h6 { font-weight: 800; letter-spacing: -0.02em; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
-
         /* ==========================================================================
-           2. GLOBAL ENVIRONMENT EFFECTS (Canvas, Noise, Grid, Scrollbar)
+           2. GLOBAL ENVIRONMENT EFFECTS
            ========================================================================== */
-        /* WebGL Particle Canvas */
-        #ambient-canvas {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: -2; pointer-events: none; opacity: 0.6;
-        }
-
-        /* Radial CSS Lighting Layer */
-        .gradient-bg {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle at 50% 0%, var(--bg-mid) 0%, transparent 80%);
-            z-index: -1; pointer-events: none; mix-blend-mode: screen;
-            transition: background 1.5s var(--ease-apple);
-        }
-
-        /* Render Engine Grid Pattern */
-        .tech-grid {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-image: 
-                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: -1; pointer-events: none; opacity: 0.5;
-            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
-            -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
-        }
-
-        /* 35mm Film Grain Noise */
-        .noise {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            pointer-events: none; z-index: 9998; opacity: 0.04; mix-blend-mode: overlay;
-            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-        }
-
-        /* Custom Scroll Progress UI */
-        .scroll-progress-container {
-            position: fixed; right: 2vw; top: 50%; transform: translateY(-50%);
-            height: 40vh; width: 2px; background: rgba(255,255,255,0.05);
-            z-index: 9000; border-radius: 4px; overflow: hidden;
-        }
-        .scroll-progress-fill {
-            position: absolute; top: 0; left: 0; width: 100%; height: 0%;
-            background: var(--accent-primary); box-shadow: 0 0 15px var(--accent-glow);
-        }
+        #ambient-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; opacity: 0.6; }
+        .gradient-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at 50% 0%, var(--bg-mid) 0%, transparent 80%); z-index: -1; pointer-events: none; mix-blend-mode: screen; transition: background 1.5s var(--ease-apple); }
+        .tech-grid { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 50px 50px; z-index: -1; pointer-events: none; opacity: 0.5; mask-image: radial-gradient(circle at center, black 40%, transparent 100%); -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%); }
+        .noise { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9998; opacity: 0.04; mix-blend-mode: overlay; background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); }
 
         /* ==========================================================================
            3. MAGNETIC CURSOR SYSTEM
            ========================================================================== */
-        .cursor-dot {
-            width: 6px; height: 6px; background: var(--accent-primary);
-            border-radius: 50%; position: fixed; top: 0; left: 0;
-            pointer-events: none; z-index: 10000; transform: translate(-50%, -50%);
-            transition: opacity 0.3s, transform 0.1s;
-        }
-        .cursor-ring {
-            width: 40px; height: 40px; border: 1px solid rgba(144, 224, 175, 0.4);
-            border-radius: 50%; position: fixed; top: 0; left: 0;
-            pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
-            transition: width 0.4s var(--ease-apple), height 0.4s var(--ease-apple), background 0.4s var(--ease-apple), border-color 0.4s;
-        }
-        
-        /* Cursor States */
-        .cursor-hover .cursor-ring { 
-            width: 80px; height: 80px; background: rgba(144, 224, 175, 0.05); 
-            border-color: rgba(144, 224, 175, 0.8); backdrop-filter: blur(2px); 
-        }
+        .cursor-dot { width: 6px; height: 6px; background: var(--accent-primary); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: opacity 0.3s; }
+        .cursor-ring { width: 40px; height: 40px; border: 1px solid rgba(144, 224, 175, 0.4); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: width 0.4s var(--ease-apple), height 0.4s var(--ease-apple), background 0.4s var(--ease-apple), border-color 0.4s; }
+        .cursor-hover .cursor-ring { width: 80px; height: 80px; background: rgba(144, 224, 175, 0.05); border-color: rgba(144, 224, 175, 0.8); backdrop-filter: blur(2px); }
         .cursor-hover .cursor-dot { transform: translate(-50%, -50%) scale(0.5); }
 
         /* ==========================================================================
-           4. AE RENDER PIPELINE PRELOADER (Data Synced)
+           4. FIXED PROFILE PIC & PRELOADER
            ========================================================================== */
-        .preloader {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: var(--bg-deep); z-index: 100000; display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
+        /* This is your profile pic that flies from center to top-left! */
+        #hero-profile-pic {
+            position: fixed; z-index: 6000; object-fit: cover; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.2); opacity: 0; pointer-events: none;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
+
+        .preloader { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-deep); z-index: 100000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .loader-brand { font-size: 14px; font-weight: 900; letter-spacing: 8px; margin-bottom: 50px; color: var(--text-dim); }
         .loader-math { font-family: 'JetBrains Mono', monospace; font-size: 140px; font-weight: 800; letter-spacing: -6px; line-height: 1; text-shadow: 0 0 30px rgba(255,255,255,0.1); }
-        
         .loader-bar-bg { width: 400px; height: 2px; background: rgba(255,255,255,0.05); margin-top: 40px; position: relative; overflow: hidden; border-radius: 2px; }
         .loader-bar-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--accent-primary); box-shadow: 0 0 20px var(--accent-glow); transition: width 0.1s ease-out; }
-        
         .loader-status { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent-primary); margin-top: 25px; text-transform: uppercase; letter-spacing: 3px; }
 
         /* ==========================================================================
            5. NAVIGATION UI
            ========================================================================== */
-        nav {
-            position: fixed; top: 0; left: 0; width: 100%; padding: 35px 6vw;
-            display: flex; justify-content: space-between; align-items: center;
-            z-index: 5000; mix-blend-mode: difference;
-        }
+        nav { position: fixed; top: 0; left: 0; width: 100%; padding: 35px 6vw; display: flex; justify-content: space-between; align-items: center; z-index: 5000; }
         .nav-logo { display: flex; align-items: center; gap: 18px; }
-        .nav-logo img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; filter: grayscale(100%) contrast(1.2); transition: filter 0.6s var(--ease-apple), transform 0.6s var(--ease-apple); }
-        .nav-logo:hover img { filter: grayscale(0%) contrast(1); transform: scale(1.05); }
+        /* Empty placeholder exactly the size of your profile pic so the word Sangram aligns perfectly */
+        .logo-placeholder { width: 48px; height: 48px; border-radius: 50%; }
         .nav-logo span { font-size: 17px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
         
         .nav-links { display: flex; gap: 15px; }
         .magnetic-wrap { padding: 10px 20px; display: inline-block; position: relative; }
-        .magnetic-wrap a { 
-            color: var(--text-pure); text-decoration: none; font-size: 13px; font-weight: 600; 
-            text-transform: uppercase; letter-spacing: 2px; opacity: 0.6; 
-            transition: opacity 0.3s, color 0.3s; display: inline-block; 
-        }
+        .magnetic-wrap a { color: var(--text-pure); text-decoration: none; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; opacity: 0.6; transition: opacity 0.3s, color 0.3s; display: inline-block; }
         .magnetic-wrap:hover a { opacity: 1; color: var(--accent-primary); text-shadow: 0 0 10px rgba(144,224,175,0.3); }
 
         /* ==========================================================================
            6. HERO SECTION
            ========================================================================== */
         .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 0 6vw; }
-        .hero-tagline { font-family: 'JetBrains Mono', monospace; color: var(--accent-primary); font-size: 13px; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 3vh; overflow: hidden; }
-        .hero-title {
-            font-size: clamp(60px, 12vw, 180px); font-weight: 900; line-height: 0.85;
-            letter-spacing: -0.05em; text-transform: uppercase; text-align: center;
-            background: linear-gradient(180deg, #FFFFFF 0%, rgba(255,255,255,0.3) 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 2vh;
-            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
-        }
         
-        .scroll-indicator { position: absolute; bottom: 6vh; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 15px; opacity: 0.5; transition: opacity 0.3s; }
-        .scroll-indicator:hover { opacity: 1; }
-        .scroll-indicator span { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 4px; font-weight: 600; color: var(--accent-primary); }
-        .scroll-line { width: 1px; height: 80px; background: rgba(255,255,255,0.1); position: relative; overflow: hidden; }
-        .scroll-line::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 40%; background: var(--accent-primary); animation: scrollDrop 2.5s cubic-bezier(0.77, 0, 0.175, 1) infinite; }
-        @keyframes scrollDrop { 0% { transform: translateY(-100%); } 100% { transform: translateY(300%); } }
+        /* Spacer to push text below the centered profile picture */
+        .hero-spacer { height: 180px; } 
+
+        /* Scroll-Synced CC Light Sweep on Name */
+        .hero-name {
+            font-family: 'JetBrains Mono', monospace; font-size: 28px; letter-spacing: 16px; 
+            text-transform: uppercase; margin-bottom: 2vh; opacity: 0;
+            background: linear-gradient(120deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.2) 40%, #ffffff 50%, rgba(255,255,255,0.2) 60%, rgba(255,255,255,0.2) 100%);
+            background-size: 200% auto; color: transparent; -webkit-background-clip: text;
+            background-position: 100% center; /* Starts hidden on the right */
+        }
+
+        .hero-tagline { font-family: 'JetBrains Mono', monospace; color: var(--accent-primary); font-size: 13px; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 2vh; overflow: hidden; opacity: 0; }
+        .hero-title { font-size: clamp(60px, 12vw, 180px); font-weight: 900; line-height: 0.85; letter-spacing: -0.05em; text-transform: uppercase; text-align: center; background: linear-gradient(180deg, #FFFFFF 0%, rgba(255,255,255,0.3) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 2vh; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5)); }
 
         /* ==========================================================================
            7. 3D PHOENIX MASTER CONTROLLER
            ========================================================================== */
         .model-container {
-            position: fixed; top: 8vh; left: 0; width: 600px; height: 600px;
+            position: fixed; top: 12vh; left: 0; width: 600px; height: 600px;
             z-index: 50; pointer-events: none; perspective: 2000px;
-            visibility: hidden; opacity: 0; /* Handled by GSAP Preloader Logic */
-            transform: scale(0.8) translateY(50px);
+            opacity: 0; transform: scale(0.8) translateY(50px);
         }
         .model-floater { width: 100%; height: 100%; animation: organicFloat 8s ease-in-out infinite; }
         @keyframes organicFloat { 0%, 100% { transform: translateY(0) rotateX(0deg) rotateY(0deg); } 50% { transform: translateY(-25px) rotateX(4deg) rotateY(2deg); } }
-        
         model-viewer { width: 100%; height: 100%; --poster-color: transparent; filter: drop-shadow(0 30px 40px rgba(0,0,0,0.6)); }
 
         /* ==========================================================================
-           8. PORTFOLIO LAYOUT & GLASSMORPHISM CARDS
+           8. PORTFOLIO LAYOUT & SABER GLASS CARDS
            ========================================================================== */
         .portfolio-sections { padding: 15vh 10vw 25vh; display: flex; flex-direction: column; gap: 35vh; position: relative; }
         .spine-line { position: absolute; top: 0; left: 50%; width: 1px; height: 100%; background: linear-gradient(180deg, transparent, rgba(255,255,255,0.05), transparent); z-index: -1; transform: translateX(-50%); }
@@ -220,82 +127,39 @@
         .section-block:nth-child(odd) { justify-content: flex-end; }
         .section-block:nth-child(even) { justify-content: flex-start; }
 
-        /* * THE MASTER GLASS CARD 
-         * Combines Mouse-Tracking Lighting, Apple TV Tilt, Saber Border, and CC Light Sweep
-         */
         .glass-card {
             width: 48%; padding: 4vw; border-radius: 24px; position: relative; z-index: 10;
             background: rgba(255, 255, 255, 0.015); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255, 255, 255, 0.03); 
-            box-shadow: 0 40px 100px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
-            transform-style: preserve-3d; transition: transform 0.1s ease-out;
-            overflow: hidden; /* Contains the Light Sweep and Inner Glow */
+            border: 1px solid rgba(255, 255, 255, 0.03); box-shadow: 0 40px 100px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+            transform-style: preserve-3d; transition: transform 0.1s ease-out; overflow: hidden; 
         }
         
         /* Interactive Mouse Radial Light inside the Glass */
-        .glass-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 24px;
-            background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255,255,255,0.08), transparent 40%);
-            z-index: -1; transition: opacity 0.6s; opacity: 0; pointer-events: none;
-        }
+        .glass-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 24px; background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255,255,255,0.08), transparent 40%); z-index: -1; transition: opacity 0.6s; opacity: 0; pointer-events: none; }
         .glass-card:hover::before { opacity: 1; }
 
-        /* ---------------------------------------------------------
-           NEW: CC Light Sweep Effect (CSS Implementation)
-           --------------------------------------------------------- */
-        .cc-light-sweep {
-            position: absolute; top: 0; left: -100%; width: 40%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.15), rgba(255,255,255,0.5), rgba(255,255,255,0.15), transparent);
-            transform: skewX(-25deg); z-index: 15; pointer-events: none;
-            filter: blur(5px);
-        }
-        /* Fires the sweep across the card on hover */
+        /* CC Light Sweep Effect */
+        .cc-light-sweep { position: absolute; top: 0; left: -100%; width: 40%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.15), rgba(255,255,255,0.5), rgba(255,255,255,0.15), transparent); transform: skewX(-25deg); z-index: 15; pointer-events: none; filter: blur(5px); }
         .glass-card:hover .cc-light-sweep { animation: lightSweepAnim 1.5s cubic-bezier(0.19, 1, 0.22, 1); }
         @keyframes lightSweepAnim { 0% { left: -100%; opacity: 0; } 50% { opacity: 1; } 100% { left: 200%; opacity: 0; } }
 
-        /* ---------------------------------------------------------
-           NEW: Saber Glow Border (SVG Implementation)
-           --------------------------------------------------------- */
-        .saber-wrapper {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 20; border-radius: 24px;
-        }
-        .saber-path {
-            fill: none; stroke: var(--accent-primary); stroke-width: 2px;
-            /* pathLength="100" maps the entire perimeter to 0-100 logic */
-            stroke-dasharray: 100; stroke-dashoffset: 100; 
-            filter: drop-shadow(0 0 8px var(--accent-primary)) drop-shadow(0 0 20px var(--accent-primary));
-            vector-effect: non-scaling-stroke; rx: 24px;
-            transition: stroke-dashoffset 2s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-        /* When ScrollTrigger adds 'saber-active', the line draws itself! */
+        /* Saber Glow Border SVG */
+        .saber-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; border-radius: 24px; }
+        .saber-path { fill: none; stroke: var(--accent-primary); stroke-width: 2px; stroke-dasharray: 100; stroke-dashoffset: 100; filter: drop-shadow(0 0 8px var(--accent-primary)) drop-shadow(0 0 20px var(--accent-primary)); vector-effect: non-scaling-stroke; rx: 24px; transition: stroke-dashoffset 2s cubic-bezier(0.19, 1, 0.22, 1); }
         .glass-card.saber-active .saber-path { stroke-dashoffset: 0; }
 
-        /* Card Content & Typography */
-        .card-num { 
-            font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--accent-primary); 
-            margin-bottom: 25px; display: inline-block; border-bottom: 1px solid var(--glass-border); 
-            padding-bottom: 15px; transform: translateZ(30px); 
-            transition: text-shadow 0.3s;
-        }
-        .glass-card.saber-active .card-num { text-shadow: 0 0 10px rgba(144,224,175,0.5); } /* Glitch/Glow sync */
-
+        .card-num { font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--accent-primary); margin-bottom: 25px; display: inline-block; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; transform: translateZ(30px); transition: text-shadow 0.3s; }
+        .glass-card.saber-active .card-num { text-shadow: 0 0 10px rgba(144,224,175,0.5); } 
         .card-title { font-size: clamp(32px, 3.5vw, 50px); font-weight: 800; letter-spacing: -1px; margin-bottom: 25px; line-height: 1.1; transform: translateZ(50px); }
         .card-desc { font-size: 16px; color: var(--text-dim); line-height: 1.8; margin-bottom: 45px; font-weight: 300; transform: translateZ(40px); }
 
-        /* Video Container inside Card */
-        .video-box {
-            border-radius: 12px; overflow: hidden; position: relative;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);
-            transform: translateZ(70px); /* Massive 3D Pop */
-            transition: box-shadow 0.6s var(--ease-apple), border-color 0.6s;
-        }
+        .video-box { border-radius: 12px; overflow: hidden; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); transform: translateZ(70px); transition: box-shadow 0.6s var(--ease-apple), border-color 0.6s; }
         .glass-card:hover .video-box { box-shadow: 0 50px 80px rgba(0,0,0,0.7); border-color: rgba(255,255,255,0.3); }
         .video-box video { width: 100%; display: block; filter: brightness(0.8) contrast(1.1) saturate(0.9); transition: filter 0.6s; }
         .glass-card:hover .video-box video { filter: brightness(1.05) contrast(1.05) saturate(1.1); }
 
         /* ==========================================================================
-           9. THE ARSENAL (Tech Stack Pipeline)
+           9. THE ARSENAL & FOOTER
            ========================================================================== */
         .pipeline { padding: 15vh 10vw 25vh; position: relative; z-index: 10; }
         .section-header { text-align: center; margin-bottom: 12vh; }
@@ -303,24 +167,16 @@
         .sh-large { font-size: clamp(50px, 6vw, 90px); font-weight: 900; text-transform: uppercase; letter-spacing: -2px; }
 
         .arsenal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.5vw; }
-        .tech-item {
-            padding: 4vw; background: linear-gradient(145deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.005) 100%);
-            border: 1px solid var(--glass-border); border-radius: 20px; position: relative; overflow: hidden;
-            transition: transform 0.6s var(--ease-apple), border-color 0.6s, box-shadow 0.6s;
-        }
+        .tech-item { padding: 4vw; background: linear-gradient(145deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.005) 100%); border: 1px solid var(--glass-border); border-radius: 20px; position: relative; overflow: hidden; transition: transform 0.6s var(--ease-apple), border-color 0.6s, box-shadow 0.6s; }
         .tech-item:hover { transform: translateY(-15px); border-color: rgba(144, 224, 175, 0.3); box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
         .tech-icon { font-size: 26px; color: var(--accent-primary); margin-bottom: 25px; font-family: 'JetBrains Mono', monospace; font-weight: 800; }
         .tech-item h4 { font-size: 26px; font-weight: 800; margin-bottom: 15px; letter-spacing: -0.5px; }
         .tech-item p { font-size: 16px; color: var(--text-dim); line-height: 1.7; margin-bottom: 25px; font-weight: 300; }
         .tech-spec { font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 8px 16px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; display: inline-block; color: var(--accent-primary); letter-spacing: 1px; }
 
-        /* ==========================================================================
-           10. MASSIVE STUDIO FOOTER
-           ========================================================================== */
         footer { padding: 15vh 6vw 5vh; border-top: 1px solid var(--glass-border); position: relative; overflow: hidden; background: #000; }
         .footer-giant { font-size: 18vw; font-weight: 900; line-height: 0.8; letter-spacing: -0.05em; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.05); text-align: center; margin-bottom: 12vh; user-select: none; transition: -webkit-text-stroke 0.5s; }
         footer:hover .footer-giant { -webkit-text-stroke: 1px rgba(144, 224, 175, 0.2); }
-        
         .footer-bottom { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 50px; }
         .fb-left h3 { font-size: 22px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
         .fb-left p { color: var(--text-dim); font-size: 13px; font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; }
@@ -329,20 +185,17 @@
         .social-link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: var(--accent-primary); transform: translateX(-101%); transition: transform 0.4s var(--ease-apple); }
         .social-link:hover::after { transform: translateX(0); }
 
-        /* ==========================================================================
-           11. RESPONSIVE BREAKPOINTS
-           ========================================================================== */
         @media (max-width: 1024px) {
             .section-block { justify-content: center !important; }
-            .glass-card { width: 100%; padding: 6vw; transform: none !important; } /* Disable tilt on mobile for performance */
-            .cc-light-sweep { display: none; } /* Disable sweep on mobile to save GPU */
+            .glass-card { width: 100%; padding: 6vw; transform: none !important; } 
+            .cc-light-sweep { display: none; }
             .spine-line { display: none; }
-            .model-container { display: none; } /* Hide heavy 3D */
+            .model-container { display: none; } 
             .cursor-dot, .cursor-ring { display: none; } 
             * { cursor: auto; }
             .arsenal-grid { grid-template-columns: 1fr; }
-            .scroll-progress-container { display: none; }
             .tech-grid { display: none; }
+            #hero-profile-pic { display: none; } /* Hide complicated scroll logic on mobile */
         }
     </style>
 </head>
@@ -356,9 +209,7 @@
     <div class="cursor-dot"></div>
     <div class="cursor-ring"></div>
 
-    <div class="scroll-progress-container">
-        <div class="scroll-progress-fill"></div>
-    </div>
+    <img src="profile.jpg" id="hero-profile-pic" alt="Sangram Profile">
 
     <div class="preloader">
         <div class="loader-brand">SANGRAM.SYS // RENDER QUEUE</div>
@@ -375,7 +226,7 @@
 
     <nav>
         <div class="nav-logo magnetic-wrap">
-            <img src="profile.jpg" alt="Sangram Profile" class="magnetic-elem">
+            <div class="logo-placeholder"></div>
             <span class="magnetic-elem">Sangram</span>
         </div>
         <div class="nav-links">
@@ -385,15 +236,13 @@
     </nav>
 
     <header class="hero">
+        <div class="hero-spacer"></div>
+        <h2 class="hero-name">SANGRAM</h2>
         <div class="hero-tagline split-chars">B.Sc Chemist // Visual Engineer</div>
         <h1 class="hero-title">
             <div class="split-lines">Motion</div>
             <div class="split-lines">Graphics</div>
         </h1>
-        <div class="scroll-indicator">
-            <span>Scroll</span>
-            <div class="scroll-line"></div>
-        </div>
     </header>
 
     <section class="portfolio-sections" id="work" data-bgcolor="#0A101C">
@@ -508,80 +357,82 @@
         // ---------------------------------------------------------
         // 1. LENIS SMOOTH SCROLL INIT
         // ---------------------------------------------------------
-        const lenis = new Lenis({
-            duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            direction: 'vertical', smooth: true, mouseMultiplier: 1
-        });
-        
-        lenis.on('scroll', (e) => {
-            ScrollTrigger.update();
-            const progress = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
-            document.querySelector('.scroll-progress-fill').style.height = `${progress}%`;
-        });
-        
+        const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), direction: 'vertical', smooth: true, mouseMultiplier: 1 });
+        lenis.on('scroll', ScrollTrigger.update);
         gsap.ticker.add((time) => { lenis.raf(time * 1000); });
         gsap.ticker.lagSmoothing(0, 0);
         lenis.stop(); // Lock scroll during preload
 
         // ---------------------------------------------------------
-        // 2. MODEL-SYNC PRELOADER
+        // 2. FIXED PRELOADER (Time-Based & Guaranteed Reveal)
         // ---------------------------------------------------------
-        const modelEl = document.getElementById('phoenix-model');
         const counterText = document.querySelector('.loader-math');
         const fillBar = document.querySelector('.loader-bar-fill');
         const statusText = document.querySelector('.loader-status');
-        let currentLoad = 0;
+        let loadProgress = 0;
 
-        modelEl.addEventListener('progress', (event) => {
-            const progressRaw = event.detail.totalProgress * 100;
-            gsap.to(fillBar, { width: progressRaw + '%', duration: 0.2 });
+        let loaderInterval = setInterval(() => {
+            // Random fast counting logic
+            loadProgress += Math.floor(Math.random() * 5) + 2; 
+            if(loadProgress >= 100) loadProgress = 100;
             
-            let updateCounter = setInterval(() => {
-                if(currentLoad < Math.floor(progressRaw)) {
-                    currentLoad++;
-                    counterText.innerText = currentLoad.toString().padStart(3, '0');
-                    if(currentLoad > 20) statusText.innerText = "Parsing Geometry & Node Data...";
-                    if(currentLoad > 60) statusText.innerText = "Applying PBR Textures...";
-                    if(currentLoad > 85) statusText.innerText = "Initializing 3D Lighting Engine...";
-                } else {
-                    clearInterval(updateCounter);
-                }
-                
-                if(currentLoad === 100 && progressRaw === 100) {
-                    clearInterval(updateCounter);
-                    statusText.innerText = "Systems Ready. Rendering Output.";
-                    revealSite();
-                }
-            }, 10);
-        });
+            counterText.innerText = loadProgress.toString().padStart(3, '0');
+            fillBar.style.width = loadProgress + '%';
+            
+            if(loadProgress > 25) statusText.innerText = "Parsing Geometry & Node Data...";
+            if(loadProgress > 65) statusText.innerText = "Applying PBR Textures...";
 
-        // Failsafe
-        setTimeout(() => { if (currentLoad === 0) { currentLoad = 100; revealSite(); } }, 6000);
+            if(loadProgress === 100) {
+                clearInterval(loaderInterval);
+                statusText.innerText = "Systems Ready. Rendering Output.";
+                setTimeout(revealSite, 400); // Tiny pause before lifting the curtain
+            }
+        }, 40);
 
-        let hasRevealed = false;
         function revealSite() {
-            if(hasRevealed) return;
-            hasRevealed = true;
-            
             gsap.to(".preloader", {
-                yPercent: -100, duration: 1.5, ease: "power4.inOut", delay: 0.5,
+                yPercent: -100, duration: 1.5, ease: "power4.inOut",
                 onComplete: () => {
                     document.querySelector('.preloader').style.display = 'none';
                     lenis.start(); 
                     
-                    gsap.to('.model-container', {
-                        autoAlpha: 1, scale: 1, y: 0, duration: 2.5, ease: "power3.out"
-                    });
+                    // REVEAL BIRD
+                    gsap.to('.model-container', { opacity: 1, scale: 1, y: 0, duration: 2.5, ease: "power3.out" });
                     
+                    // REVEAL PROFILE PIC
+                    gsap.to('#hero-profile-pic', { opacity: 1, duration: 1.5, ease: "power2.out" });
+
+                    // REVEAL TEXT
                     gsap.to('.hero-title .gsap-line', { y: '0%', duration: 1.2, stagger: 0.1, ease: "power4.out" });
-                    gsap.to('.hero-tagline', { opacity: 1, duration: 1 }, "-=0.8");
+                    gsap.to('.hero-tagline, .hero-name', { opacity: 1, duration: 1 }, "-=0.8");
                 }
             });
         }
 
         // ---------------------------------------------------------
-        // 3. CANVAS FLUID PARTICLE ENGINE (Deep Space Dust)
+        // 3. PROFILE PIC & CC LIGHT SWEEP SCROLL ANIMATION
+        // ---------------------------------------------------------
+        // Set the Profile Pic to start perfectly in the center
+        gsap.set("#hero-profile-pic", { top: "30vh", left: "50vw", xPercent: -50, yPercent: -50, width: "160px", height: "160px" });
+        
+        // The Profile Pic Flight Path
+        gsap.to("#hero-profile-pic", {
+            scrollTrigger: { trigger: "body", start: "top top", end: "250px top", scrub: 1 },
+            top: "35px", left: "6vw", // Matches Nav Padding perfectly
+            xPercent: 0, yPercent: 0,
+            width: "48px", height: "48px", // Matches Logo Placeholder size perfectly
+            ease: "power2.inOut"
+        });
+
+        // The CC Light Sweep over your Name
+        gsap.to(".hero-name", {
+            scrollTrigger: { trigger: "body", start: "top top", end: "350px top", scrub: 1 },
+            backgroundPosition: "-100% center", // Sweeps the bright white gradient from Right to Left
+            ease: "none"
+        });
+
+        // ---------------------------------------------------------
+        // 4. CANVAS FLUID PARTICLE ENGINE (Deep Space Dust)
         // ---------------------------------------------------------
         const canvas = document.getElementById('ambient-canvas');
         const ctx = canvas.getContext('2d');
@@ -593,11 +444,9 @@
 
         class Particle {
             constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
+                this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
                 this.size = Math.random() * 1.5 + 0.5;
-                this.speedX = Math.random() * 0.4 - 0.2;
-                this.speedY = Math.random() * 0.4 - 0.2;
+                this.speedX = Math.random() * 0.4 - 0.2; this.speedY = Math.random() * 0.4 - 0.2;
                 this.baseAlpha = Math.random() * 0.5 + 0.1;
             }
             update() {
@@ -605,14 +454,10 @@
                 if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
                 if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
                 
-                // Parallax Repulsion
                 if (mouse.x) {
                     let dx = mouse.x - this.x; let dy = mouse.y - this.y;
                     let distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < 250) { 
-                        this.x -= dx * 0.005; 
-                        this.y -= dy * 0.005; 
-                    }
+                    if (distance < 250) { this.x -= dx * 0.005; this.y -= dy * 0.005; }
                 }
             }
             draw() {
@@ -630,35 +475,22 @@
         window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
         // ---------------------------------------------------------
-        // 4. APPLE TV 3D TILT & MOUSE LIGHTING ENGINE
+        // 5. APPLE TV 3D TILT & MOUSE LIGHTING ENGINE
         // ---------------------------------------------------------
         document.querySelectorAll('.tilt-card').forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left; const y = e.clientY - rect.top;
-                
-                // Set CSS variables for the inner radial gradient glow
                 card.style.setProperty('--mouse-x', `${x}px`);
                 card.style.setProperty('--mouse-y', `${y}px`);
-
-                // 3D Parallax Tilt Calculation
-                const xPct = (x / rect.width - 0.5) * 2; 
-                const yPct = (y / rect.height - 0.5) * 2; 
-                
-                gsap.to(card, {
-                    rotationX: -yPct * 6, // 6 degrees max tilt
-                    rotationY: xPct * 6,
-                    ease: "power2.out", duration: 0.5
-                });
+                const xPct = (x / rect.width - 0.5) * 2; const yPct = (y / rect.height - 0.5) * 2; 
+                gsap.to(card, { rotationX: -yPct * 6, rotationY: xPct * 6, ease: "power2.out", duration: 0.5 });
             });
-
-            card.addEventListener('mouseleave', () => {
-                gsap.to(card, { rotationX: 0, rotationY: 0, ease: "elastic.out(1, 0.3)", duration: 1.2 });
-            });
+            card.addEventListener('mouseleave', () => { gsap.to(card, { rotationX: 0, rotationY: 0, ease: "elastic.out(1, 0.3)", duration: 1.2 }); });
         });
 
         // ---------------------------------------------------------
-        // 5. CUSTOM MAGNETIC UI CURSOR
+        // 6. CUSTOM MAGNETIC UI CURSOR
         // ---------------------------------------------------------
         let xToDot = gsap.quickTo(".cursor-dot", "x", {duration: 0.1, ease: "power3"});
         let yToDot = gsap.quickTo(".cursor-dot", "y", {duration: 0.1, ease: "power3"});
@@ -687,7 +519,7 @@
         });
 
         // ---------------------------------------------------------
-        // 6. DYNAMIC TEXT SPLITTING & SCROLL LOGIC
+        // 7. DYNAMIC TEXT SPLITTING & SCROLL LOGIC
         // ---------------------------------------------------------
         document.querySelectorAll('.split-lines').forEach(el => {
             let text = el.innerText; el.innerHTML = '';
@@ -699,42 +531,22 @@
         gsap.registerPlugin(ScrollTrigger);
 
         document.querySelectorAll('.section-block').forEach((sec) => {
-            // Environment Color Shifts
             let bgColor = sec.getAttribute('data-bgcolor');
             if(bgColor) {
-                ScrollTrigger.create({
-                    trigger: sec, start: "top 50%", end: "bottom 50%",
-                    onEnter: () => gsap.to("body", { backgroundColor: bgColor, duration: 1 }),
-                    onEnterBack: () => gsap.to("body", { backgroundColor: bgColor, duration: 1 })
-                });
+                ScrollTrigger.create({ trigger: sec, start: "top 50%", end: "bottom 50%", onEnter: () => gsap.to("body", { backgroundColor: bgColor, duration: 1 }), onEnterBack: () => gsap.to("body", { backgroundColor: bgColor, duration: 1 }) });
             }
+            gsap.to(sec.querySelectorAll('.gsap-line'), { scrollTrigger: { trigger: sec, start: "top 80%" }, y: '0%', duration: 1, stagger: 0.1, ease: "power4.out" });
 
-            // Text Animations
-            gsap.to(sec.querySelectorAll('.gsap-line'), {
-                scrollTrigger: { trigger: sec, start: "top 80%" },
-                y: '0%', duration: 1, stagger: 0.1, ease: "power4.out"
-            });
-
-            // NEW: Fire the Saber Glow Border Line
-            ScrollTrigger.create({
-                trigger: sec,
-                start: "top 70%",
-                onEnter: () => {
-                    // Adds the class to trigger the CSS stroke-dashoffset animation
-                    sec.querySelector('.glass-card').classList.add('saber-active');
-                }
-            });
+            // Fire the Saber Glow Border Line
+            ScrollTrigger.create({ trigger: sec, start: "top 70%", onEnter: () => { sec.querySelector('.glass-card').classList.add('saber-active'); } });
         });
 
-        // Arsenal Reveal
-        gsap.to(document.querySelectorAll('.sh-large .gsap-line'), {
-            scrollTrigger: { trigger: '#arsenal', start: "top 80%" },
-            y: '0%', duration: 1, ease: "power4.out"
-        });
+        gsap.to(document.querySelectorAll('.sh-large .gsap-line'), { scrollTrigger: { trigger: '#arsenal', start: "top 80%" }, y: '0%', duration: 1, ease: "power4.out" });
 
         // ---------------------------------------------------------
-        // 7. THE MASTER 3D FLIGHT PATH
+        // 8. THE MASTER 3D FLIGHT PATH
         // ---------------------------------------------------------
+        const modelEl = document.getElementById('phoenix-model');
         const rot = { pitch: 0, yaw: 0, roll: 0 }; 
         const updateModel3D = () => { if(modelEl.setAttribute) modelEl.setAttribute('orientation', `${rot.pitch}deg ${rot.yaw}deg ${rot.roll}deg`); };
 
@@ -742,19 +554,14 @@
             scrollTrigger: { trigger: "#work", start: "top 90%", endTrigger: "#arsenal", end: "top 40%", scrub: 2.5 }
         });
 
-        // F1: Dive Right
         flightPath.to(".model-container", { x: "50vw", y: "15vh", scale: 1.3, ease: "sine.inOut" }, "f1")
           .to(rot, { pitch: 15, yaw: 25, roll: -20, onUpdate: updateModel3D, ease: "sine.inOut" }, "f1")
-        // F2: Bank Left
         .to(".model-container", { x: "5vw", y: "40vh", scale: 0.85, ease: "sine.inOut" }, "f2")
         .to(rot, { pitch: -5, yaw: -160, roll: 20, onUpdate: updateModel3D, ease: "sine.inOut" }, "f2")
-        // F3: Bank Right
         .to(".model-container", { x: "50vw", y: "65vh", scale: 1.35, ease: "sine.inOut" }, "f3")
         .to(rot, { pitch: 12, yaw: 20, roll: -15, onUpdate: updateModel3D, ease: "sine.inOut" }, "f3")
-        // F4: Level out Left
         .to(".model-container", { x: "5vw", y: "90vh", scale: 1, ease: "sine.inOut" }, "f4")
         .to(rot, { pitch: 0, yaw: -180, roll: 0, onUpdate: updateModel3D, ease: "sine.inOut" }, "f4")
-        // F5: Final Epic Dive into Arsenal Tech Stack
         .to(".model-container", { x: "30vw", y: "135vh", scale: 1.7, ease: "power1.inOut" }, "f5")
         .to(rot, { pitch: 35, yaw: -20, roll: -15, onUpdate: updateModel3D, ease: "power1.inOut" }, "f5");
 
