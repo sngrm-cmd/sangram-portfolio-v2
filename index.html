@@ -96,9 +96,6 @@
         /* ==========================================================================
            5. NAVIGATION UI & FIXED PROFILE PIC
            ========================================================================== */
-        /* GUARANTEED VISIBLE FIXED PHOTO. 
-           GSAP will control opacity and position dynamically. 
-        */
         #hero-profile-pic { 
             position: fixed; 
             z-index: 9500; 
@@ -107,17 +104,14 @@
             border: 2px solid rgba(255,255,255,0.15); 
             pointer-events: none; 
             box-shadow: 0 20px 60px rgba(0,0,0,0.9); 
-            /* Started perfectly centered */
-            top: 35vh; left: 50vw; 
+            top: 40vh; left: 50vw; 
             transform: translate(-50%, -50%);
-            width: 160px; height: 160px;
-            /* Explicitly hidden initially so the preloader looks clean */
+            width: 150px; height: 150px;
             opacity: 0; 
         }
 
         nav { position: fixed; top: 0; left: 0; width: 100%; padding: 40px 6vw; display: flex; justify-content: space-between; align-items: center; z-index: 5000; mix-blend-mode: difference; }
         .nav-logo { display: flex; align-items: center; gap: 20px; }
-        /* Empty target for the photo to dock into */
         .logo-placeholder { width: 50px; height: 50px; border-radius: 50%; } 
         
         .nav-links { display: flex; gap: 20px; }
@@ -126,11 +120,9 @@
         .magnetic-wrap:hover a { opacity: 1; color: var(--accent-primary); text-shadow: 0 0 15px rgba(144,224,175,0.4); }
 
         /* ==========================================================================
-           6. HERO SECTION (ONLY NAME & SWEEP)
+           6. HERO SECTION
            ========================================================================== */
         .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 0 6vw; }
-        
-        /* This spaces the text down so the profile picture fits exactly above it */
         .hero-spacer { height: 180px; } 
 
         .hero-name {
@@ -138,23 +130,13 @@
             font-size: clamp(60px, 15vw, 200px); 
             font-weight: 900; letter-spacing: 12px; text-transform: uppercase; 
             margin-bottom: 2vh; 
-            
-            /* Gradient base + bright white sweep spot */
-            background: linear-gradient(120deg, 
-                rgba(255,255,255,0.15) 0%, 
-                rgba(255,255,255,0.15) 40%, 
-                #ffffff 50%, 
-                rgba(255,255,255,0.15) 60%, 
-                rgba(255,255,255,0.15) 100%
-            );
+            background: linear-gradient(120deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) 40%, #ffffff 50%, rgba(255,255,255,0.1) 60%, rgba(255,255,255,0.1) 100%);
             background-size: 300% auto; 
             color: transparent; 
             -webkit-background-clip: text;
-            background-position: 100% center; /* Glare starts hidden right */
-            
-            /* JS will animate this from 0 to 1 */
+            background-position: 100% center; 
             opacity: 0;
-            margin-left: 12px; /* Visual balance for letter spacing */
+            margin-left: 20px;
         }
         
         .scroll-indicator { position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 20px; opacity: 0.4; transition: opacity 0.4s; }
@@ -204,28 +186,28 @@
         .glass-card:hover::before { opacity: 1; }
 
         /* ---------------------------------------------------------
-           NEW: SOFT REALISTIC FULL-CONTAINER GLASS GLARE
+           NEW: AGGRESSIVE, SHARP METALLIC GLARE (Reference Matched)
            --------------------------------------------------------- */
         .cc-light-sweep { 
-            position: absolute; top: -50%; left: -100%; width: 80%; height: 200%; 
-            /* Very soft, multi-band gradient imitating curved glass reflection */
-            background: linear-gradient(to right, 
-                rgba(255,255,255,0) 0%, 
-                rgba(255,255,255,0.01) 15%, 
-                rgba(255,255,255,0.03) 25%, 
-                rgba(255,255,255,0) 30%, 
-                rgba(255,255,255,0.15) 45%, /* Core soft white glare */
-                rgba(255,255,255,0.0) 50%, 
-                rgba(255,255,255,0.02) 65%, 
-                rgba(255,255,255,0) 100%
+            position: absolute; top: -50%; left: -100%; width: 120%; height: 200%; 
+            /* Sharp, highly-opaque white core to match the reference image */
+            background: linear-gradient(
+                to right, 
+                rgba(255, 255, 255, 0) 0%, 
+                rgba(255, 255, 255, 0) 40%, 
+                rgba(255, 255, 255, 0.4) 47%, 
+                rgba(255, 255, 255, 1) 50%, /* Solid bright core */
+                rgba(255, 255, 255, 0.4) 53%, 
+                rgba(255, 255, 255, 0) 60%, 
+                rgba(255, 255, 255, 0) 100%
             );
-            transform: skewX(-35deg); 
-            z-index: 100; /* Physically overlays the text and video */
+            transform: skewX(-25deg); 
+            z-index: 100; /* ABOVE text and video */
             pointer-events: none; 
-            mix-blend-mode: screen; /* Lightens the underlying pixels beautifully */
-            filter: blur(8px); /* Heavily softens the lines into a realistic shine */
+            /* Overlay burns the bright white into the dark background beneath it */
+            mix-blend-mode: overlay; 
         }
-        /* No hover animations. This is purely driven by GSAP ScrollTrigger below! */
+        /* No CSS Hover animations. Glare is purely scroll-driven by GSAP */
 
         .saber-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; border-radius: 30px; }
         .saber-path { fill: none; stroke: var(--accent-primary); stroke-width: 2px; stroke-dasharray: 100; stroke-dashoffset: 100; filter: drop-shadow(0 0 10px var(--accent-primary)) drop-shadow(0 0 30px var(--accent-glow)); vector-effect: non-scaling-stroke; rx: 30px; transition: stroke-dashoffset 3s var(--ease-fluid); }
@@ -342,8 +324,7 @@
 
     <header class="hero">
         <div class="hero-spacer"></div>
-        <h2 class="hero-name">SNGRM</h2>
-        
+        <h2 class="hero-name split-chars-dynamic">SNGRM</h2>
         <div class="scroll-indicator">
             <span>Scroll</span>
             <div class="scroll-line"></div>
@@ -571,17 +552,34 @@
                 }
             });
             
-            // Explicitly force Profile Pic opacity
+            // Explicitly force Profile Pic opacity to 1 immediately
             gsap.to('#hero-profile-pic', { opacity: 1, duration: 1.5, ease: "power2.out", delay: 0.5 });
             
-            // Animate SNGRM text as a whole block to keep background-clip text intact
-            gsap.fromTo('.hero-name', 
-                { opacity: 0, scale: 0.95, filter: "blur(10px)" },
-                { opacity: 1, scale: 1, filter: "blur(0px)", duration: 2, ease: "power3.out", delay: 0.5 }
-            );
+            // Character by Character reveal for SNGRM
+            gsap.to('.hero-name', { opacity: 1, duration: 0.1, delay: 0.5 }); // Ensure container is visible
+            gsap.to('.hero-name .gsap-char', { y: '0%', duration: 1.5, stagger: 0.05, ease: "power4.out", delay: 0.6 });
         }
 
-        // 4. FIXED PROFILE PIC PARALLAX & HERO SCROLL LIGHT SWEEP
+        // 4. CHARACTER SPLICING ENGINE (Must run BEFORE scroll triggers)
+        document.querySelectorAll('.split-chars-dynamic').forEach(el => {
+            let text = el.innerText; el.innerHTML = '';
+            for(let i=0; i<text.length; i++){
+                let char = text[i] === ' ' ? '&nbsp;' : text[i];
+                let wrapper = document.createElement('span'); wrapper.style.overflow = 'hidden'; wrapper.style.display = 'inline-block';
+                let inner = document.createElement('span'); inner.innerHTML = char; 
+                inner.style.transform = 'translateY(110%)'; inner.style.display = 'inline-block'; inner.classList.add('gsap-char');
+                wrapper.appendChild(inner); el.appendChild(wrapper);
+            }
+        });
+
+        document.querySelectorAll('.split-lines').forEach(el => {
+            let text = el.innerText; el.innerHTML = '';
+            let wrapper = document.createElement('div'); wrapper.style.overflow = 'hidden'; wrapper.style.display = 'inline-block';
+            let inner = document.createElement('div'); inner.innerText = text; inner.style.transform = 'translateY(110%)'; inner.classList.add('gsap-line');
+            wrapper.appendChild(inner); el.appendChild(wrapper);
+        });
+
+        // 5. FIXED PROFILE PIC PARALLAX & HERO SCROLL LIGHT SWEEP
         gsap.set("#hero-profile-pic", { top: "35vh", left: "50vw", xPercent: -50, yPercent: -50, width: "160px", height: "160px" });
         
         gsap.to("#hero-profile-pic", {
@@ -590,13 +588,12 @@
             ease: "power2.inOut"
         });
 
-        // Wipes the text glare smoothly as you scroll
         gsap.to(".hero-name", {
             scrollTrigger: { trigger: "body", start: "top top", end: "500px top", scrub: 1 },
             backgroundPosition: "-50% center", ease: "none"
         });
 
-        // 5. CONSTELLATION FLUID CANVAS ENGINE
+        // 6. CONSTELLATION FLUID CANVAS ENGINE
         const canvas = document.getElementById('ambient-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
@@ -627,7 +624,7 @@
         initParticles(); animateCanvas();
         window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
-        // 6. APPLE TV 3D TILT ENGINE
+        // 7. APPLE TV 3D TILT ENGINE
         document.querySelectorAll('.tilt-card').forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
@@ -638,7 +635,7 @@
             card.addEventListener('mouseleave', () => { gsap.to(card, { rotationX: 0, rotationY: 0, ease: "elastic.out(1, 0.4)", duration: 1.5 }); });
         });
 
-        // 7. MAGNETIC CURSOR & UI LINKS
+        // 8. MAGNETIC CURSOR & UI LINKS
         let xToDot = gsap.quickTo(".cursor-dot", "x", {duration: 0.1, ease: "power3"});
         let yToDot = gsap.quickTo(".cursor-dot", "y", {duration: 0.1, ease: "power3"});
         let xToRing = gsap.quickTo(".cursor-ring", "x", {duration: 0.4, ease: "power3"});
@@ -659,25 +656,6 @@
             wrap.addEventListener('mouseleave', () => { gsap.to(elem, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.4)" }); });
         });
 
-        // 8. CHARACTER SPLICING ENGINE FOR PORTFOLIO CARDS
-        document.querySelectorAll('.split-chars-dynamic').forEach(el => {
-            let text = el.innerText; el.innerHTML = '';
-            for(let i=0; i<text.length; i++){
-                let char = text[i] === ' ' ? '&nbsp;' : text[i];
-                let wrapper = document.createElement('span'); wrapper.style.overflow = 'hidden'; wrapper.style.display = 'inline-block';
-                let inner = document.createElement('span'); inner.innerHTML = char; 
-                inner.style.transform = 'translateY(110%)'; inner.style.display = 'inline-block'; inner.classList.add('gsap-char');
-                wrapper.appendChild(inner); el.appendChild(wrapper);
-            }
-        });
-
-        document.querySelectorAll('.split-lines').forEach(el => {
-            let text = el.innerText; el.innerHTML = '';
-            let wrapper = document.createElement('div'); wrapper.style.overflow = 'hidden'; wrapper.style.display = 'inline-block';
-            let inner = document.createElement('div'); inner.innerText = text; inner.style.transform = 'translateY(110%)'; inner.classList.add('gsap-line');
-            wrapper.appendChild(inner); el.appendChild(wrapper);
-        });
-
         // 9. ADVANCED SCROLLTRIGGERS
         gsap.to(".track-1", { xPercent: -50, ease: "none", scrollTrigger: { trigger: ".marquee-section", start: "top bottom", end: "bottom top", scrub: 1 } });
         gsap.to(".track-2", { xPercent: 50, ease: "none", scrollTrigger: { trigger: ".marquee-section", start: "top bottom", end: "bottom top", scrub: 1 } });
@@ -688,7 +666,7 @@
             skewElems.forEach(elem => { gsap.to(elem, { rotationX: skewAmount, duration: 0.2, ease: "power2.out", overwrite: true }); });
         });
 
-        // Card Scroll Animations & Realistic Glare sweeps
+        // Card Scroll Animations & Sharp Glare sweeps
         document.querySelectorAll('.section-block').forEach((sec) => {
             let bgColor = sec.getAttribute('data-bgcolor');
             if(bgColor) {
@@ -701,7 +679,7 @@
             
             ScrollTrigger.create({ trigger: sec, start: "top 60%", onEnter: () => { sec.querySelector('.glass-card').classList.add('saber-active'); } });
 
-            // SCROLL-SYNCED REALISTIC GLARE OVER THE CARDS
+            // SCROLL-SYNCED SHARP GLARE OVER THE CARDS
             const sweepElement = sec.querySelector('.cc-light-sweep');
             if (sweepElement) {
                 gsap.to(sweepElement, {
@@ -711,7 +689,7 @@
                         end: "bottom top",    
                         scrub: 1              
                     },
-                    left: "200%", // Wipes perfectly across the card as it passes the screen
+                    left: "200%", // Wipes aggressively across the card
                     ease: "none"
                 });
             }
@@ -739,3 +717,4 @@
     </script>
 </body>
 </html>
+
