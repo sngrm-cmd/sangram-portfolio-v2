@@ -12,28 +12,20 @@
 
     <style>
         /* ==========================================================================
-           1. ROOT VARIABLES, TYPOGRAPHY & RESET
+           1. CSS VARIABLES, TYPOGRAPHY & RESET
            ========================================================================== */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800;900&family=JetBrains+Mono:wght@300;400;700;800&display=swap');
 
         :root {
             --bg-deep: #010204;
             --bg-mid: #050A14;
-            --bg-highlight: #0A1428;
-            
             --accent-primary: #90E0AF;
             --accent-glow: rgba(144, 224, 175, 0.6);
-            --accent-secondary: #4A88D9;
-            
             --text-pure: #FFFFFF;
-            --text-bright: rgba(255, 255, 255, 0.9);
             --text-dim: rgba(255, 255, 255, 0.4);
-            
-            --glass-bg: rgba(255, 255, 255, 0.015);
             --glass-border: rgba(255, 255, 255, 0.05);
-            
             --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
-            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+            --ease-fluid: cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
@@ -55,14 +47,11 @@
         ::selection { background: var(--accent-primary); color: #000; }
 
         /* ==========================================================================
-           2. GLOBAL ENVIRONMENT EFFECTS (Canvas, Noise, Grid, HUD)
+           2. GLOBAL ENVIRONMENT EFFECTS (Canvas, Grid, HUD)
            ========================================================================== */
         #ambient-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; opacity: 0.8; }
-        
         .gradient-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at 50% 0%, var(--bg-mid) 0%, transparent 80%); z-index: -1; pointer-events: none; mix-blend-mode: screen; transition: background 1.5s var(--ease-apple); }
-        
-        .tech-grid { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px); background-size: 60px 60px; z-index: -1; pointer-events: none; opacity: 0.7; mask-image: radial-gradient(circle at center, black 30%, transparent 100%); -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 100%); }
-        
+        .tech-grid { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px); background-size: 60px 60px; z-index: -1; pointer-events: none; mask-image: radial-gradient(circle at center, black 30%, transparent 100%); -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 100%); }
         .noise { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9998; opacity: 0.05; mix-blend-mode: overlay; background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); }
 
         .hud { position: fixed; z-index: 8000; pointer-events: none; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; }
@@ -83,21 +72,9 @@
         .cursor-hover .cursor-dot { transform: translate(-50%, -50%) scale(0); }
 
         /* ==========================================================================
-           4. TERMINAL BOOT PRELOADER & FIXED PROFILE PIC
+           4. TERMINAL BOOT PRELOADER 
            ========================================================================== */
-        /* Fixed starting point for profile pic, flying logic is in JS below */
-        #hero-profile-pic { 
-            position: fixed; 
-            z-index: 6000; 
-            object-fit: cover; 
-            border-radius: 50%; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            opacity: 0; 
-            pointer-events: none; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8); 
-            /* JavaScript explicitly sets starting coordinates below */
-        }
-
+        /* Preloader spans 100vw/vh and sits ABOVE everything, hiding it natively until reveal */
         .preloader { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 100000; display: flex; flex-direction: column; justify-content: space-between; padding: 4vw; }
         .terminal-header { font-family: 'JetBrains Mono', monospace; color: var(--text-dim); font-size: 12px; }
         .terminal-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
@@ -107,12 +84,26 @@
         .loader-bar-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--text-pure); transition: width 0.1s; }
 
         /* ==========================================================================
-           5. NAVIGATION UI
+           5. NAVIGATION UI & FIXED PROFILE PIC
            ========================================================================== */
+        /* Guaranteed Visible Profile Pic. Sits in center, flies to Nav later. */
+        #hero-profile-pic { 
+            position: fixed; 
+            z-index: 9500; 
+            object-fit: cover; 
+            border-radius: 50%; 
+            border: 2px solid rgba(255,255,255,0.15); 
+            pointer-events: none; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.9); 
+            /* Start coordinates */
+            top: 40vh; left: 50vw; 
+            transform: translate(-50%, -50%);
+            width: 150px; height: 150px;
+        }
+
         nav { position: fixed; top: 0; left: 0; width: 100%; padding: 40px 6vw; display: flex; justify-content: space-between; align-items: center; z-index: 5000; mix-blend-mode: difference; }
         .nav-logo { display: flex; align-items: center; gap: 20px; }
         .logo-placeholder { width: 50px; height: 50px; border-radius: 50%; } /* Empty space for photo to dock into */
-        .nav-logo span { font-size: 16px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; }
         
         .nav-links { display: flex; gap: 20px; }
         .magnetic-wrap { padding: 10px 20px; display: inline-block; position: relative; }
@@ -120,23 +111,27 @@
         .magnetic-wrap:hover a { opacity: 1; color: var(--accent-primary); text-shadow: 0 0 15px rgba(144,224,175,0.4); }
 
         /* ==========================================================================
-           6. CLEAN HERO SECTION (Text staggar reveals character by character)
+           6. CLEAN HERO SECTION (ONLY NAME)
            ========================================================================== */
-        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 0 6vw; perspective: 1000px; }
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 0 6vw; }
         
-        /* Pushes the name down so the centered profile pic fits perfectly above it */
-        .hero-spacer { height: 160px; } 
+        /* Spacer pushes SNGRM down so the profile pic fits perfectly above it */
+        .hero-spacer { height: 180px; } 
 
+        /* The Hero Name with SCROLL CC LIGHT SWEEP */
         .hero-name {
-            font-family: 'JetBrains Mono', monospace; font-size: clamp(60px, 12vw, 160px); 
-            font-weight: 900; letter-spacing: 20px; text-transform: uppercase; 
-            margin-bottom: 2vh; opacity: 0;
-            margin-left: 20px; /* Offset for tracking balance */
+            font-family: 'Inter', sans-serif; 
+            font-size: clamp(80px, 16vw, 220px); 
+            font-weight: 900; letter-spacing: 8px; text-transform: uppercase; 
+            margin-bottom: 2vh; 
             
-            /* High-End AE Matte Glare Reflection */
-            background: linear-gradient(120deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) 45%, #ffffff 50%, rgba(255,255,255,0.1) 55%, rgba(255,255,255,0.1) 100%);
-            background-size: 250% auto; color: transparent; -webkit-background-clip: text;
-            background-position: 100% center; /* Glare starts hidden right */
+            /* The base color is dark grey, the gradient sweeps bright white across it */
+            background: linear-gradient(120deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.1) 40%, #ffffff 50%, rgba(255,255,255,0.1) 60%, rgba(255,255,255,0.1) 100%);
+            background-size: 300% auto; 
+            color: transparent; 
+            -webkit-background-clip: text;
+            /* Start the bright white spot hidden off to the right */
+            background-position: 100% center; 
         }
         
         .scroll-indicator { position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 20px; opacity: 0.4; transition: opacity 0.4s; }
@@ -165,7 +160,7 @@
         .marquee-item .separator { color: var(--accent-primary); font-size: 30px; margin: 0 40px; font-family: 'JetBrains Mono', monospace; }
 
         /* ==========================================================================
-           9. 3D SABER GLASS PORTFOLIO LAYOUT (Characters slide up independently)
+           9. 3D SABER GLASS PORTFOLIO LAYOUT
            ========================================================================== */
         .portfolio-sections { padding: 15vh 10vw 25vh; display: flex; flex-direction: column; gap: 35vh; position: relative; }
         .spine-line { position: absolute; top: 0; left: 50%; width: 1px; height: 100%; background: linear-gradient(180deg, transparent, rgba(255,255,255,0.05), transparent); z-index: -1; transform: translateX(-50%); }
@@ -182,27 +177,28 @@
             transform-style: preserve-3d; transition: transform 0.1s ease-out; overflow: hidden; 
         }
         
+        /* Mouse Tracker Radial Light */
         .glass-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 30px; background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255,255,255,0.06), transparent 40%); z-index: -1; transition: opacity 0.6s; opacity: 0; pointer-events: none; }
         .glass-card:hover::before { opacity: 1; }
 
         /* ---------------------------------------------------------
-           NEW: WHOLE-CONTAINER CC LIGHT SWEEP (Metallic Glare Overlay)
+           NEW: FULL CONTAINER CC LIGHT SWEEP
            --------------------------------------------------------- */
         .cc-light-sweep { 
-            position: absolute; top: -50%; left: -100%; width: 50%; height: 200%; 
-            /* High-end metallic gradient */
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.05) 60%, rgba(255,255,255,0) 100%); 
+            position: absolute; top: -50%; left: -100%; width: 60%; height: 200%; 
+            /* Extremely bright white core with soft falloff */
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.1) 60%, rgba(255,255,255,0) 100%); 
             transform: skewX(-25deg); 
-            z-index: 100; /* Moves it OVER the text and video */
+            z-index: 100; /* Must be ABOVE text and video */
             pointer-events: none; 
-            mix-blend-mode: overlay; /* Blends glare with card content */
+            mix-blend-mode: screen; /* SCREEN ensures the white glare pops on dark backgrounds */
         }
-        .glass-card:hover .cc-light-sweep { animation: lightSweepAnim 1.5s cubic-bezier(0.19, 1, 0.22, 1); }
+        .glass-card:hover .cc-light-sweep { animation: lightSweepAnim 1.8s var(--ease-fluid); }
         @keyframes lightSweepAnim { 0% { left: -100%; } 100% { left: 200%; } }
 
         /* Saber Glow Border SVG */
         .saber-wrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; border-radius: 30px; }
-        .saber-path { fill: none; stroke: var(--accent-primary); stroke-width: 2px; stroke-dasharray: 100; stroke-dashoffset: 100; filter: drop-shadow(0 0 10px var(--accent-primary)) drop-shadow(0 0 30px var(--accent-glow)); vector-effect: non-scaling-stroke; rx: 30px; transition: stroke-dashoffset 2.5s cubic-bezier(0.19, 1, 0.22, 1); }
+        .saber-path { fill: none; stroke: var(--accent-primary); stroke-width: 2px; stroke-dasharray: 100; stroke-dashoffset: 100; filter: drop-shadow(0 0 10px var(--accent-primary)) drop-shadow(0 0 30px var(--accent-glow)); vector-effect: non-scaling-stroke; rx: 30px; transition: stroke-dashoffset 3s var(--ease-fluid); }
         .glass-card.saber-active .saber-path { stroke-dashoffset: 0; }
 
         .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px; margin-bottom: 30px; transform: translateZ(40px); }
@@ -211,6 +207,10 @@
         .card-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; }
 
         .card-title { font-size: clamp(30px, 3vw, 48px); font-weight: 900; letter-spacing: -1px; margin-bottom: 20px; line-height: 1.1; transform: translateZ(60px); }
+        
+        /* Utility class to hide text until GSAP handles it */
+        .hide-text { opacity: 0; }
+        
         .card-desc { font-size: 15px; color: var(--text-dim); line-height: 1.8; margin-bottom: 40px; font-weight: 400; transform: translateZ(50px); }
 
         .video-box { border-radius: 16px; overflow: hidden; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); transform: translateZ(80px); transition: box-shadow 0.6s var(--ease-apple), border-color 0.6s, transform 0.6s var(--ease-apple); }
@@ -267,9 +267,6 @@
             * { cursor: auto; }
             .arsenal-grid { grid-template-columns: 1fr; }
             #hero-profile-pic { display: none; } 
-            .fc-top { flex-direction: column; gap: 40px; }
-            .footer-bottom { flex-direction: column; gap: 40px; align-items: flex-start; }
-            .marquee-item h3 { font-size: 30px; }
         }
     </style>
 </head>
@@ -309,7 +306,7 @@
     <nav>
         <div class="nav-logo magnetic-wrap">
             <div class="logo-placeholder"></div>
-            <span class="magnetic-elem">Sangram</span>
+            <span class="magnetic-elem"></span> 
         </div>
         <div class="nav-links">
             <div class="magnetic-wrap"><a href="#work" class="magnetic-elem">Output</a></div>
@@ -319,7 +316,7 @@
 
     <header class="hero">
         <div class="hero-spacer"></div>
-        <h2 class="hero-name split-chars-dynamic">SNGRM</h2>
+        <h2 class="hero-name">SNGRM</h2>
         <div class="scroll-indicator">
             <span>Scroll</span>
             <div class="scroll-line"></div>
@@ -371,8 +368,8 @@
                         <span class="card-num">// 001. VFX</span>
                         <span class="card-meta">After Effects</span>
                     </div>
-                    <h2 class="card-title split-chars-dynamic">VFX Integration & Compositing</h2>
-                    <p class="card-desc">Pushing the boundaries of raw footage. Advanced node and layer-based visual effects built to augment physical reality seamlessly.</p>
+                    <h2 class="card-title split-chars-dynamic">VFX Integration</h2>
+                    <p class="card-desc split-lines">Pushing the boundaries of raw footage. Advanced node and layer-based visual effects built to augment physical reality seamlessly.</p>
                     <div class="video-box"><video autoplay loop muted playsinline><source src="B1Meteor.mp4" type="video/mp4"></video></div>
                 </div>
             </div>
@@ -389,8 +386,8 @@
                         <span class="card-num">// 002. LENS</span>
                         <span class="card-meta">Color Grade</span>
                     </div>
-                    <h2 class="card-title split-chars-dynamic">Cinematic Lighting & Aesthetics</h2>
-                    <p class="card-desc">Emulating professional camera setups. Utilizing deep color grading and environmental mapping to craft movie-grade atmospheres.</p>
+                    <h2 class="card-title split-chars-dynamic">Cinematic Aesthetics</h2>
+                    <p class="card-desc split-lines">Emulating professional camera setups. Utilizing deep color grading and environmental mapping to craft movie-grade atmospheres.</p>
                     <div class="video-box"><video autoplay loop muted playsinline><source src="B2Beach.mp4" type="video/mp4"></video></div>
                 </div>
             </div>
@@ -408,7 +405,7 @@
                         <span class="card-meta">Trend Sync</span>
                     </div>
                     <h2 class="card-title split-chars-dynamic">Trend Sync & Pacing</h2>
-                        <p class="card-desc">High-impact editing calculated to hold retention. Driven by hyper-smooth transitions, speed ramping, and heavy audio rhythm synchronization.</p>
+                    <p class="card-desc split-lines">High-impact editing calculated to hold retention. Driven by hyper-smooth transitions, speed ramping, and heavy audio rhythm synchronization.</p>
                     <div class="video-box"><video autoplay loop muted playsinline><source src="B3Tiki.mp4" type="video/mp4"></video></div>
                 </div>
             </div>
@@ -425,8 +422,8 @@
                         <span class="card-num">// 004. TYPO</span>
                         <span class="card-meta">Design Sys</span>
                     </div>
-                    <h2 class="card-title split-chars-dynamic">Kinetic Typographic Systems</h2>
-                    <p class="card-desc">Transforming static text into a physical element. Engineering fluid motion profiles that communicate style, hierarchy, and information simultaneously.</p>
+                    <h2 class="card-title split-chars-dynamic">Kinetic Typography</h2>
+                    <p class="card-desc split-lines">Transforming static text into a physical element. Engineering fluid motion profiles that communicate style, hierarchy, and information simultaneously.</p>
                     <div class="video-box"><video autoplay loop muted playsinline><source src="B4Sngrm.mp4" type="video/mp4"></video></div>
                 </div>
             </div>
@@ -440,40 +437,25 @@
         </div>
         <div class="arsenal-grid">
             <div class="tech-item magnetic-trigger">
-                <div class="tech-header">
-                    <div class="tech-icon">[AE]</div>
-                    <div class="tech-status"><div class="status-dot"></div> ONLINE</div>
-                </div>
+                <div class="tech-header"><div class="tech-icon">[AE]</div><div class="tech-status"><div class="status-dot"></div> ONLINE</div></div>
                 <h4>Core Compositing</h4>
                 <p>Heavy-duty timeline management, 3D camera mapping, and rendering executed within the industry standard post-production suite.</p>
                 <span class="tech-spec">AFTER EFFECTS CC</span>
             </div>
-            
             <div class="tech-item magnetic-trigger">
-                <div class="tech-header">
-                    <div class="tech-icon">[MOB]</div>
-                    <div class="tech-status"><div class="status-dot"></div> ONLINE</div>
-                </div>
+                <div class="tech-header"><div class="tech-icon">[MOB]</div><div class="tech-status"><div class="status-dot"></div> ONLINE</div></div>
                 <h4>Node Systems</h4>
                 <p>Rapid deployment editing and node-based compositing designed for high-end social formatting on the fly.</p>
                 <span class="tech-spec">NODE VIDEO / CAPCUT</span>
             </div>
-
             <div class="tech-item magnetic-trigger">
-                <div class="tech-header">
-                    <div class="tech-icon">[HW]</div>
-                    <div class="tech-status"><div class="status-dot"></div> OPTIMIZED</div>
-                </div>
+                <div class="tech-header"><div class="tech-icon">[HW]</div><div class="tech-status"><div class="status-dot"></div> OPTIMIZED</div></div>
                 <h4>Render Farm</h4>
                 <p>Custom-built desktop workstation configured to handle dense RAM previews, heavy cache loads, and multi-layered rendering.</p>
                 <span class="tech-spec">RYZEN 5 5600G / 8GB / B450M</span>
             </div>
-
             <div class="tech-item magnetic-trigger">
-                <div class="tech-header">
-                    <div class="tech-icon">[CAM]</div>
-                    <div class="tech-status"><div class="status-dot"></div> RECORDING</div>
-                </div>
+                <div class="tech-header"><div class="tech-icon">[CAM]</div><div class="tech-status"><div class="status-dot"></div> RECORDING</div></div>
                 <h4>Optical Matrix</h4>
                 <p>Shooting deep, flexible color profiles ready for intense post-production grading and AI-enhanced scaling.</p>
                 <span class="tech-spec">SAMSUNG S24 FE</span>
@@ -507,40 +489,29 @@
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // ---------------------------------------------------------
-        // 1. LENIS SMOOTH SCROLL INIT (With Velocity Tracker)
-        // ---------------------------------------------------------
-        const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), direction: 'vertical', smooth: true, mouseMultiplier: 1 });
-        
+        // 1. LENIS SMOOTH SCROLL
+        const lenis = new Lenis({ duration: 1.5, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), direction: 'vertical', smooth: true });
         let scrollVelocity = 0;
         lenis.on('scroll', (e) => {
             ScrollTrigger.update();
             scrollVelocity = e.velocity;
-            
-            // HUD Updates
             document.getElementById('hud-scroll').innerText = Math.floor(e.scroll).toString().padStart(4, '0');
             const progress = (e.scroll / (document.body.scrollHeight - window.innerHeight)) * 100;
             document.querySelector('.scroll-progress-fill').style.height = `${progress}%`;
         });
-        
         gsap.ticker.add((time) => { lenis.raf(time * 1000); });
         gsap.ticker.lagSmoothing(0, 0);
-        lenis.stop(); // Lock scroll during preload
+        lenis.stop(); 
 
-        // ---------------------------------------------------------
-        // 2. HUD LOCAL CLOCK (India Standard Time)
-        // ---------------------------------------------------------
+        // 2. HUD LOCAL CLOCK 
         setInterval(() => {
             const timeStr = new Date().toLocaleTimeString("en-US", { timeZone: "Asia/Kolkata", hour12: false });
             document.getElementById('hud-time').innerText = timeStr;
         }, 1000);
 
-        // ---------------------------------------------------------
-        // 3. TERMINAL BOOT PRELOADER LOGIC
-        // ---------------------------------------------------------
+        // 3. TERMINAL BOOT & PRELOADER
         const termBody = document.getElementById('term-body');
-        const termLines = [ "Connecting to local server...", "Loading WebGL Renderer... OK", "Fetching 3D Model: phoenix_bird.glb... OK", "Compiling GLSL Shaders... OK", "Allocating Video RAM... OK", "Initializing Main Sequence..." ];
-        
+        const termLines = ["Connecting to local server...", "Loading WebGL Renderer... OK", "Fetching 3D Model: phoenix_bird.glb... OK", "Compiling GLSL Shaders... OK", "Allocating Video RAM... OK", "Initializing Main Sequence..."];
         const counterText = document.querySelector('.loader-math');
         const fillBar = document.querySelector('.loader-bar-fill');
         let loadProgress = 0, lineIndex = 0;
@@ -550,12 +521,11 @@
                 let p = document.createElement('p'); p.className = 'terminal-line'; p.innerText = "> " + termLines[lineIndex];
                 termBody.appendChild(p); gsap.to(p, {opacity: 1, duration: 0.2}); lineIndex++;
             }
-        }, 400);
+        }, 300);
 
         let loaderInterval = setInterval(() => {
-            loadProgress += Math.floor(Math.random() * 4) + 1; 
+            loadProgress += Math.floor(Math.random() * 6) + 1; 
             if(loadProgress >= 100) loadProgress = 100;
-            
             counterText.innerText = loadProgress.toString().padStart(3, '0');
             fillBar.style.width = loadProgress + '%';
             
@@ -565,6 +535,7 @@
         }, 40);
 
         function revealSite() {
+            // Un-hide everything natively via GSAP when preloader finishes
             gsap.to(".preloader", {
                 yPercent: -100, duration: 1.5, ease: "power4.inOut",
                 onComplete: () => {
@@ -573,24 +544,15 @@
                     
                     // REVEAL BIRD
                     gsap.to('.model-container', { opacity: 1, scale: 1, y: 0, duration: 2.5, ease: "power3.out" });
-                    
-                    // NEW: Explicitly Reveal the Fixed Profile Pic (The visibility fix)
-                    gsap.to('#hero-profile-pic', { opacity: 1, duration: 1.5, ease: "power2.out" });
-
-                    // Reveal staggar revealed hero name
-                    gsap.to('.hero-name', { opacity: 1, duration: 1 });
-                    // Explicitly staggar reveal the letters in the centered Hero name
-                    gsap.to('.hero-name .gsap-char', { y: '0%', duration: 1.2, stagger: 0.03, ease: "power4.out" });
                 }
             });
+            
+            // GSAP forces the profile picture to opacity 1 here, guaranteeing visibility
+            gsap.to('#hero-profile-pic', { opacity: 1, duration: 1.5, ease: "power2.out", delay: 0.5 });
+            gsap.to('.hero-name', { opacity: 1, duration: 1, delay: 0.5 });
         }
 
-        // ---------------------------------------------------------
-        // 4. FIXED PROFILE PIC PARALLAX DETACH & HERO TEXT
-        // ---------------------------------------------------------
-        // Set Profile pic to start detached in the center, above the name
-        gsap.set("#hero-profile-pic", { top: "35vh", left: "50vw", xPercent: -50, yPercent: -50, width: "160px", height: "160px" });
-        
+        // 4. FIXED PROFILE PIC PARALLAX DETACH & CC LIGHT SWEEP GSAP
         // As you scroll, the name stays with the page, the profile pic flies up diagonally to Nav spot
         gsap.to("#hero-profile-pic", {
             scrollTrigger: { trigger: "body", start: "top top", end: "300px top", scrub: 1 },
@@ -600,16 +562,14 @@
             ease: "power2.inOut"
         });
 
-        // Wipes bright white CC light sweep matte over new staggar-revealed text on scroll
+        // Wipes bright white CC light sweep matte over the main SNGRM text
         gsap.to(".hero-name", {
-            scrollTrigger: { trigger: "body", start: "top top", end: "400px top", scrub: 1 },
+            scrollTrigger: { trigger: "body", start: "top top", end: "450px top", scrub: 1 },
             backgroundPosition: "-100% center", // Sweeps matte gradient Right to Left
             ease: "none"
         });
 
-        // ---------------------------------------------------------
         // 5. CONSTELLATION FLUID CANVAS ENGINE
-        // ---------------------------------------------------------
         const canvas = document.getElementById('ambient-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
@@ -640,9 +600,7 @@
         initParticles(); animateCanvas();
         window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
-        // ---------------------------------------------------------
         // 6. APPLE TV 3D TILT ENGINE
-        // ---------------------------------------------------------
         document.querySelectorAll('.tilt-card').forEach(card => {
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
@@ -653,9 +611,7 @@
             card.addEventListener('mouseleave', () => { gsap.to(card, { rotationX: 0, rotationY: 0, ease: "elastic.out(1, 0.4)", duration: 1.5 }); });
         });
 
-        // ---------------------------------------------------------
         // 7. MAGNETIC CURSOR & UI LINKS
-        // ---------------------------------------------------------
         let xToDot = gsap.quickTo(".cursor-dot", "x", {duration: 0.1, ease: "power3"});
         let yToDot = gsap.quickTo(".cursor-dot", "y", {duration: 0.1, ease: "power3"});
         let xToRing = gsap.quickTo(".cursor-ring", "x", {duration: 0.4, ease: "power3"});
@@ -676,20 +632,20 @@
             wrap.addEventListener('mouseleave', () => { gsap.to(elem, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.4)" }); });
         });
 
-        // ---------------------------------------------------------
-        // 8. NEW: BUTTERY-SMOOTH CHARACTER SPLICING ENGINE
-        // ---------------------------------------------------------
+        // 8. BUTTERY-SMOOTH CHARACTER SPLICING ENGINE
+        // Slices H2 titles into individual span letters for AE text animator feeling
         document.querySelectorAll('.split-chars-dynamic').forEach(el => {
             let text = el.innerText; el.innerHTML = '';
             for(let i=0; i<text.length; i++){
                 let char = text[i] === ' ' ? '&nbsp;' : text[i];
                 let wrapper = document.createElement('span'); wrapper.style.overflow = 'hidden'; wrapper.style.display = 'inline-block';
-                let inner = document.createElement('span'); inner.innerHTML = char; inner.style.transform = 'translateY(110%)'; inner.style.display = 'inline-block'; inner.classList.add('gsap-char');
+                let inner = document.createElement('span'); inner.innerHTML = char; 
+                // Push letters down to start
+                inner.style.transform = 'translateY(110%)'; inner.style.display = 'inline-block'; inner.classList.add('gsap-char');
                 wrapper.appendChild(inner); el.appendChild(wrapper);
             }
         });
 
-        // Split lines function still used for generic tagline/arsenal text
         document.querySelectorAll('.split-lines').forEach(el => {
             let text = el.innerText; el.innerHTML = '';
             let wrapper = document.createElement('div'); wrapper.style.overflow = 'hidden'; wrapper.style.display = 'inline-block';
@@ -697,28 +653,34 @@
             wrapper.appendChild(inner); el.appendChild(wrapper);
         });
 
-        // ---------------------------------------------------------
         // 9. ADVANCED SCROLLTRIGGERS (Velocity Skew, Marquee, Saber)
-        // ---------------------------------------------------------
-        // Infinite Marquee
         gsap.to(".track-1", { xPercent: -50, ease: "none", scrollTrigger: { trigger: ".marquee-section", start: "top bottom", end: "bottom top", scrub: 1 } });
         gsap.to(".track-2", { xPercent: 50, ease: "none", scrollTrigger: { trigger: ".marquee-section", start: "top bottom", end: "bottom top", scrub: 1 } });
 
-        // Scroll Velocity Skewing on Portfolio Cards
         const skewElems = document.querySelectorAll('.skew-elem');
         gsap.ticker.add(() => {
             const skewAmount = scrollVelocity * 0.15; 
             skewElems.forEach(elem => { gsap.to(elem, { rotationX: skewAmount, duration: 0.2, ease: "power2.out", overwrite: true }); });
         });
 
+        // Card Scroll Animations
         document.querySelectorAll('.section-block').forEach((sec) => {
             let bgColor = sec.getAttribute('data-bgcolor');
             if(bgColor) {
                 ScrollTrigger.create({ trigger: sec, start: "top 50%", end: "bottom 50%", onEnter: () => gsap.to("body", { backgroundColor: bgColor, duration: 1.5 }), onEnterBack: () => gsap.to("body", { backgroundColor: bgColor, duration: 1.5 }) });
             }
             
-            // Trigger character-by-character kinetic reveal when card appears
-            gsap.to(sec.querySelectorAll('.gsap-char'), { scrollTrigger: { trigger: sec, start: "top 75%" }, y: '0%', duration: 0.8, stagger: 0.02, ease: "power4.out" });
+            // Ultra-fluid letter-by-letter reveal (slower duration and stagger)
+            gsap.to(sec.querySelectorAll('.gsap-char'), { 
+                scrollTrigger: { trigger: sec, start: "top 75%" }, 
+                y: '0%', duration: 1.5, stagger: 0.04, ease: "power4.out" 
+            });
+
+            // Smooth line reveal for descriptions
+            gsap.to(sec.querySelectorAll('.gsap-line'), { 
+                scrollTrigger: { trigger: sec, start: "top 75%" }, 
+                y: '0%', duration: 1.5, stagger: 0.1, ease: "power4.out", delay: 0.2
+            });
             
             // Trigger Saber Glow Border Line
             ScrollTrigger.create({ trigger: sec, start: "top 60%", onEnter: () => { sec.querySelector('.glass-card').classList.add('saber-active'); } });
@@ -726,9 +688,7 @@
 
         gsap.to(document.querySelectorAll('.sh-large .gsap-line'), { scrollTrigger: { trigger: '#arsenal', start: "top 80%" }, y: '0%', duration: 1, ease: "power4.out" });
 
-        // ---------------------------------------------------------
         // 10. THE MASTER 3D FLIGHT PATH
-        // ---------------------------------------------------------
         const modelEl = document.getElementById('phoenix-model');
         const rot = { pitch: 0, yaw: 0, roll: 0 }; 
         const updateModel3D = () => { if(modelEl.setAttribute) modelEl.setAttribute('orientation', `${rot.pitch}deg ${rot.yaw}deg ${rot.roll}deg`); };
