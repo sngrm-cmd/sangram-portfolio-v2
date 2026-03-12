@@ -16,7 +16,6 @@
         }
 
         body {
-            /* Deep ocean gradient matching the Figma file */
             background: linear-gradient(180deg, #2E6BCE 0%, #0F2E60 100%);
             color: #ffffff;
             overflow-x: hidden;
@@ -73,6 +72,13 @@
             text-align: center;
             padding: 120px 20px 150px;
             position: relative;
+            /* Fade in hero on load */
+            animation: heroFadeIn 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes heroFadeIn {
+            0% { opacity: 0; transform: translateY(30px); filter: blur(10px); }
+            100% { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
 
         .subtitle {
@@ -103,7 +109,7 @@
 
         .btn {
             display: inline-block;
-            background: #90E0AF; /* Soft green matching Figma CTA */
+            background: #90E0AF;
             color: #0F2E60;
             padding: 12px 30px;
             border-radius: 50px;
@@ -122,11 +128,10 @@
             padding: 0 10% 100px;
             display: flex;
             flex-direction: column;
-            gap: 180px; /* Large gap to allow scrolling and 3D space */
+            gap: 180px;
             position: relative;
         }
 
-        /* The Dotted Background Line */
         .portfolio-sections::before {
             content: '';
             position: absolute;
@@ -143,14 +148,8 @@
             width: 100%;
         }
 
-        /* Staggering logic */
-        .section-block:nth-child(odd) {
-            justify-content: flex-end; /* Right side */
-        }
-
-        .section-block:nth-child(even) {
-            justify-content: flex-start; /* Left side */
-        }
+        .section-block:nth-child(odd) { justify-content: flex-end; }
+        .section-block:nth-child(even) { justify-content: flex-start; }
 
         .content-box {
             width: 40%;
@@ -158,26 +157,68 @@
             flex-direction: column;
         }
 
-        .number {
-            font-size: 64px;
-            font-weight: 800;
-            opacity: 0.6;
-            line-height: 1;
-            margin-bottom: 5px;
+        /* === ANIMATION STYLES (The Motion Graphics Magic) === */
+        /* Initial state for all elements before scrolling into view */
+        .content-box .number,
+        .content-box h2,
+        .content-box p,
+        .content-box video {
+            opacity: 0;
+            filter: blur(8px); /* Simulates motion blur */
+            will-change: transform, opacity, filter;
         }
 
-        .content-box h2 {
+        /* Staggered easing and delays */
+        .content-box .number { 
+            transform: translateY(30px); 
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1); 
+        }
+        
+        .content-box h2 { 
+            transform: translateY(40px); 
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s; 
             font-size: 36px;
             font-weight: 800;
             margin-bottom: 15px;
             letter-spacing: -0.5px;
         }
-
-        .content-box p {
+        
+        .content-box p { 
+            transform: translateY(30px); 
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s; 
             opacity: 0.8;
             font-size: 15px;
             margin-bottom: 25px;
             line-height: 1.7;
+        }
+
+        /* Left and Right Video Slide Logic */
+        .section-block:nth-child(odd) .content-box video { 
+            transform: translateX(120px); /* Odd blocks are on the right, video slides in from right */
+            transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s; 
+        }
+        
+        .section-block:nth-child(even) .content-box video { 
+            transform: translateX(-120px); /* Even blocks are on the left, video slides in from left */
+            transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s; 
+        }
+
+        /* Active states when scrolled into view */
+        .content-box.show .number,
+        .content-box.show h2,
+        .content-box.show p,
+        .content-box.show video {
+            opacity: 1;
+            filter: blur(0);
+            transform: translate(0);
+        }
+
+        .number {
+            font-size: 64px;
+            font-weight: 800;
+            opacity: 0.6; /* Overridden slightly by the JS show class, which is fine */
+            line-height: 1;
+            margin-bottom: 5px;
         }
 
         /* Video Styles */
@@ -185,7 +226,7 @@
             width: 100%;
             border-radius: 8px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            background: #000; /* Fallback before video loads */
+            background: #000;
         }
 
         /* Footer */
@@ -224,16 +265,12 @@
         }
 
         @media (max-width: 900px) {
-            .section-block {
-                justify-content: center !important;
-            }
-            .content-box {
-                width: 100%;
-                max-width: 500px;
-            }
-            .portfolio-sections::before {
-                display: none;
-            }
+            .section-block { justify-content: center !important; }
+            .content-box { width: 100%; max-width: 500px; }
+            .portfolio-sections::before { display: none; }
+            /* Simplify animations for mobile */
+            .section-block:nth-child(odd) .content-box video,
+            .section-block:nth-child(even) .content-box video { transform: translateY(50px); }
         }
     </style>
 </head>
@@ -319,6 +356,29 @@
         </div>
     </footer>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.2 // Triggers the animation when 20% of the box is visible
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Adds the 'show' class to trigger the CSS animations
+                        entry.target.classList.add('show');
+                    }
+                });
+            }, observerOptions);
+
+            // Select all content boxes and observe them
+            const boxes = document.querySelectorAll('.content-box');
+            boxes.forEach(box => {
+                observer.observe(box);
+            });
+        });
+    </script>
 </body>
 </html>
-
