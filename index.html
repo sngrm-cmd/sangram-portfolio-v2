@@ -19,24 +19,18 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800;900&family=JetBrains+Mono:wght@300;400;700;800&display=swap');
 
         :root {
-            /* Mapped to SNGRM Gojo Blue (#00d2ff) instead of old Green */
-            --bg-deep: #050505;
+            var(--bg-deep): #050505;
             --bg-mid: #0a0e14;
             --bg-highlight: #0f1624;
             
             --accent-primary: #00d2ff;
             --accent-glow: rgba(0, 210, 255, 0.6);
-            --accent-secondary: #4A88D9;
             
             --text-pure: #FFFFFF;
             --text-bright: rgba(255, 255, 255, 0.9);
             --text-dim: rgba(255, 255, 255, 0.4);
             
-            --glass-bg: rgba(255, 255, 255, 0.015);
-            --glass-border: rgba(255, 255, 255, 0.05);
-            
             --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
-            --ease-fluid: cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
@@ -47,7 +41,7 @@
         .lenis.lenis-stopped { overflow: hidden; }
 
         body {
-            background-color: var(--bg-deep); color: var(--text-pure);
+            background-color: #050505; color: var(--text-pure);
             font-family: 'Inter', sans-serif; overflow-x: hidden;
             -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
             transition: background-color 1.5s var(--ease-apple);
@@ -58,14 +52,11 @@
         ::selection { background: var(--accent-primary); color: #000; }
 
         /* ==========================================================================
-           2. GLOBAL ENVIRONMENT EFFECTS (Canvas, Noise, Grid, HUD)
+           2. GLOBAL ENVIRONMENT EFFECTS & BACKGROUND FILLERS
            ========================================================================== */
         #ambient-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; pointer-events: none; opacity: 0.5; }
-        
         .gradient-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at 50% 0%, var(--bg-mid) 0%, transparent 80%); z-index: -1; pointer-events: none; mix-blend-mode: screen; transition: background 1.5s var(--ease-apple); }
-        
         .tech-grid { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px); background-size: 60px 60px; z-index: -1; pointer-events: none; opacity: 0.7; mask-image: radial-gradient(circle at center, black 30%, transparent 100%); -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 100%); }
-        
         .noise { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9998; opacity: 0.05; mix-blend-mode: overlay; background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); }
 
         .hud { position: fixed; z-index: 8000; pointer-events: none; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; }
@@ -76,6 +67,13 @@
 
         .scroll-progress-container { position: fixed; right: 30px; top: 50%; transform: translateY(-50%); height: 30vh; width: 1px; background: rgba(255,255,255,0.1); z-index: 9000; overflow: hidden; }
         .scroll-progress-fill { position: absolute; top: 0; left: 0; width: 100%; height: 0%; background: var(--accent-primary); box-shadow: 0 0 10px var(--accent-glow); }
+
+        /* Floating Space Fillers */
+        .floating-fillers { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; pointer-events: none; overflow: hidden; }
+        .float-obj { position: absolute; color: rgba(0, 210, 255, 0.04); animation: floatSlow 15s ease-in-out infinite alternate; }
+        .float-obj.delay-1 { animation-delay: -5s; }
+        .float-obj.delay-2 { animation-delay: -10s; }
+        @keyframes floatSlow { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-40px) rotate(10deg); } }
 
         /* ==========================================================================
            3. MAGNETIC CURSOR SYSTEM
@@ -141,12 +139,12 @@
         @keyframes scrollDrop { 0% { transform: translateY(-100%); } 100% { transform: translateY(400%); } }
 
         /* ==========================================================================
-           7. 3D PHOENIX MASTER MODEL
+           7. 3D STATIC BIRD (Fixed in Background)
            ========================================================================== */
-        .model-container { position: fixed; top: 10vh; left: 0; width: 700px; height: 700px; z-index: 50; pointer-events: none; perspective: 2500px; opacity: 0; transform: scale(0.8) translateY(100px); }
-        .model-floater { width: 100%; height: 100%; animation: organicFloat 10s ease-in-out infinite; }
-        @keyframes organicFloat { 0%, 100% { transform: translateY(0) rotateX(0deg) rotateY(0deg); } 50% { transform: translateY(-30px) rotateX(5deg) rotateY(3deg); } }
-        model-viewer { width: 100%; height: 100%; --poster-color: transparent; filter: drop-shadow(0 40px 60px rgba(0,0,0,0.8)); }
+        .model-container { position: fixed; top: 40vh; right: -10vw; width: 600px; height: 600px; z-index: -1; pointer-events: none; opacity: 0.2; transform: scale(0.9); }
+        .model-floater { width: 100%; height: 100%; animation: organicFloat 12s ease-in-out infinite; }
+        @keyframes organicFloat { 0%, 100% { transform: translateY(0) rotateX(0deg) rotateY(0deg); } 50% { transform: translateY(-40px) rotateX(10deg) rotateY(5deg); } }
+        model-viewer { width: 100%; height: 100%; --poster-color: transparent; filter: drop-shadow(0 0px 40px rgba(0,210,255,0.3)); }
 
         /* ==========================================================================
            8. GLASS CARDS & EFFECTS
@@ -171,6 +169,12 @@
         .glass-card:hover .video-box { box-shadow: 0 60px 100px rgba(0,0,0,0.9); border-color: rgba(255,255,255,0.2); transform: translateZ(90px); }
         .glass-card:hover .video-box video { filter: brightness(1.05) contrast(1.05) saturate(1.1); }
 
+        /* Social Icons */
+        .social-btn { display: flex; justify-content: center; align-items: center; width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); color: var(--text-pure); transition: all 0.3s var(--ease-apple); text-decoration: none; position: relative; overflow: hidden; }
+        .social-btn::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--accent-primary); opacity: 0; transition: opacity 0.3s; z-index: -1; }
+        .social-btn:hover { border-color: var(--accent-primary); color: #000; transform: translateY(-5px) scale(1.1); box-shadow: 0 10px 20px rgba(0,210,255,0.3); }
+        .social-btn:hover::before { opacity: 1; }
+
     </style>
 </head>
 <body class="selection:bg-[#00d2ff]/30">
@@ -180,6 +184,13 @@
     <div class="gradient-bg"></div>
     <div class="noise"></div>
     
+    <div class="floating-fillers">
+        <i class="fa-solid fa-flask float-obj text-[6vw]" style="top: 15%; left: 8%;"></i>
+        <i class="fa-solid fa-atom float-obj delay-1 text-[8vw]" style="bottom: 20%; left: 12%;"></i>
+        <div class="font-mono font-bold float-obj delay-2 text-[4vw]" style="top: 30%; right: 15%;">[AE]</div>
+        <div class="font-mono font-bold float-obj text-[3vw]" style="top: 70%; right: 20%;">C₈H₁₀N₄O₂</div>
+    </div>
+
     <div class="hud hud-top-left">SYS.VER: 4.2.1 <br> LAT/LONG: 21.333, 83.616</div>
     <div class="hud hud-bottom-right">SCROLL.Y <span class="hud-value" id="hud-scroll">0000</span></div>
     <div class="hud hud-bottom-left">LOCAL.TIME <span class="hud-value" id="hud-time">00:00:00</span></div>
@@ -202,7 +213,7 @@
 
     <div class="model-container">
         <div class="model-floater">
-            <model-viewer id="phoenix-model" src="phoenix_bird.glb" autoplay camera-controls="false" disable-zoom exposure="1.8" shadow-intensity="2.5" shadow-softness="0.5"></model-viewer>
+            <model-viewer id="phoenix-model" src="phoenix_bird.glb" autoplay camera-controls="false" disable-zoom exposure="1.8" shadow-intensity="2.5" shadow-softness="0.5" camera-orbit="-20deg 75deg 105%"></model-viewer>
         </div>
     </div>
 
@@ -229,53 +240,53 @@
         </div>
     </header>
 
-    <section id="about" class="max-w-7xl mx-auto px-6 py-32 flex flex-col md:flex-row items-center justify-between gap-10 relative z-10" data-bgcolor="#0a0a0a">
+    <section id="about" class="max-w-7xl mx-auto px-6 py-24 flex flex-col md:flex-row items-center justify-between gap-10 relative z-10" data-bgcolor="#0a0a0a">
         <div class="w-full md:w-1/4 skew-elem">
-            <div class="glass-card magnetic-trigger tilt-card p-4">
+            <div class="glass-card slide-left magnetic-trigger tilt-card p-4">
                 <div class="video-box"><video autoplay loop muted playsinline><source src="Slide-1L.mp4" type="video/mp4"></video></div>
             </div>
         </div>
         
-        <div class="w-full md:w-2/4 text-center z-10 about-text">
-            <h2 class="text-sm font-bold tracking-[0.3em] text-[#00d2ff] uppercase mb-4">About Me</h2>
-            <p class="text-2xl md:text-4xl font-light leading-relaxed text-gray-200 split-lines">
-                A dedicated B.Sc. Chemistry graduate <span class="text-[#00d2ff] font-bold">(8.0 CGPA)</span> bridging the gap between analytical science and digital storytelling.
+        <div class="w-full md:w-2/4 text-center z-10 about-text slide-up">
+            <h2 class="text-sm font-bold tracking-[0.3em] text-[#00d2ff] uppercase mb-6 split-chars-dynamic">About Me</h2>
+            <p class="text-xl md:text-2xl font-light leading-relaxed text-gray-200 split-lines text-justify">
+                Bridging the meticulous precision of analytical chemistry with the limitless canvas of digital engineering. As a B.Sc. Chemistry graduate, I approach post-production as a science. My workflow marries high-resolution sensor physics with automated Python pipelines to process complex imaging data. From developing intricate gigapixel mosaics to executing heavy-duty VFX integration and precise EXIF metadata management, my work is a synthesis of logic, algorithm-optimized post-production, and relentless creativity.
             </p>
         </div>
 
         <div class="w-full md:w-1/4 skew-elem">
-            <div class="glass-card magnetic-trigger tilt-card p-4">
+            <div class="glass-card slide-right magnetic-trigger tilt-card p-4">
                 <div class="video-box"><video autoplay loop muted playsinline><source src="Slide-1R.mp4" type="video/mp4"></video></div>
             </div>
         </div>
     </section>
 
-    <section class="max-w-6xl mx-auto px-6 py-20 relative z-10">
+    <section class="max-w-6xl mx-auto px-6 py-12 relative z-10">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass-card magnetic-trigger tilt-card p-10 md:col-span-2 group">
-                <span class="text-xs font-bold tracking-widest text-[#00d2ff] uppercase">Education</span>
-                <h3 class="text-4xl font-bold mt-4 mb-2 group-hover:text-[#00d2ff] transition text-white">B.Sc. in Chemistry</h3>
-                <p class="text-gray-400 text-lg">Core competencies in <span class="text-white">Electrochemistry</span> and <span class="text-white">Calculus</span>.</p>
+            <div class="glass-card slide-left magnetic-trigger tilt-card p-10 md:col-span-2 group">
+                <span class="text-xs font-bold tracking-widest text-[#00d2ff] uppercase split-chars-dynamic">Education</span>
+                <h3 class="text-4xl font-bold mt-4 mb-2 group-hover:text-[#00d2ff] transition text-white split-lines">B.Sc. in Chemistry</h3>
+                <p class="text-gray-400 text-lg split-lines">Core competencies in <span class="text-white">Electrochemistry</span> and <span class="text-white">Calculus</span>.</p>
             </div>
-            <div class="glass-card magnetic-trigger tilt-card p-10 group">
-                <span class="text-xs font-bold tracking-widest text-gray-400 uppercase">Visuals</span>
-                <h3 class="text-2xl font-bold mt-4 group-hover:text-[#00d2ff] transition text-white">Sony/Zeiss Aesthetic</h3>
-                <p class="text-gray-400 mt-2 text-sm">Cinematic color science & precision photography.</p>
+            <div class="glass-card slide-right magnetic-trigger tilt-card p-10 group">
+                <span class="text-xs font-bold tracking-widest text-gray-400 uppercase split-chars-dynamic">Visuals</span>
+                <h3 class="text-2xl font-bold mt-4 group-hover:text-[#00d2ff] transition text-white split-lines">Sony/Zeiss Aesthetic</h3>
+                <p class="text-gray-400 mt-2 text-sm split-lines">Cinematic color science & precision photography.</p>
             </div>
         </div>
     </section>
 
-    <section class="py-[15vh] px-[10vw] flex flex-col gap-[35vh] relative" id="work" style="perspective: 2000px;">
+    <section class="py-[10vh] px-[10vw] flex flex-col gap-[15vh] relative" id="work" style="perspective: 2000px;">
         <div style="position: absolute; top: 0; left: 50%; width: 1px; height: 100%; background: linear-gradient(180deg, transparent, rgba(255,255,255,0.05), transparent); z-index: -1; transform: translateX(-50%);"></div>
         
         <div class="skew-elem w-full flex items-center" style="transform-origin: center center;">
             <div class="w-full flex justify-end" data-bgcolor="#0A1428">
-                <div class="glass-card magnetic-trigger tilt-card w-full md:w-[48%] p-[4vw]">
+                <div class="glass-card slide-right magnetic-trigger tilt-card w-full md:w-[48%] p-[4vw]">
                     <div class="cc-light-sweep"></div>
                     <svg class="saber-wrapper" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><rect class="saber-path" x="0" y="0" width="100%" height="100%" pathLength="100" /></svg>
                     <div class="flex justify-between items-center border-b border-[rgba(255,255,255,0.05)] pb-5 mb-8 transform translate-z-[40px]">
-                        <span class="font-mono text-sm text-[#00d2ff]">// 001. VFX</span>
-                        <span class="font-mono text-[10px] text-gray-500 uppercase tracking-widest">After Effects</span>
+                        <span class="font-mono text-sm text-[#00d2ff] split-chars-dynamic">// 001. VFX</span>
+                        <span class="font-mono text-[10px] text-gray-500 uppercase tracking-widest split-chars-dynamic">After Effects</span>
                     </div>
                     <h2 class="text-[clamp(30px,3vw,48px)] font-black tracking-tighter mb-5 leading-tight transform translate-z-[60px] split-chars-dynamic">VFX Integration</h2>
                     <p class="text-[15px] text-gray-400 leading-relaxed mb-10 transform translate-z-[50px] split-lines">Pushing the boundaries of raw footage. Advanced node and layer-based visual effects built to augment physical reality seamlessly.</p>
@@ -286,12 +297,12 @@
 
         <div class="skew-elem w-full flex items-center" style="transform-origin: center center;">
             <div class="w-full flex justify-start" data-bgcolor="#060C18">
-                <div class="glass-card magnetic-trigger tilt-card w-full md:w-[48%] p-[4vw]">
+                <div class="glass-card slide-left magnetic-trigger tilt-card w-full md:w-[48%] p-[4vw]">
                     <div class="cc-light-sweep"></div>
                     <svg class="saber-wrapper" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><rect class="saber-path" x="0" y="0" width="100%" height="100%" pathLength="100" /></svg>
                     <div class="flex justify-between items-center border-b border-[rgba(255,255,255,0.05)] pb-5 mb-8 transform translate-z-[40px]">
-                        <span class="font-mono text-sm text-[#00d2ff]">// 002. LENS</span>
-                        <span class="font-mono text-[10px] text-gray-500 uppercase tracking-widest">Color Grade</span>
+                        <span class="font-mono text-sm text-[#00d2ff] split-chars-dynamic">// 002. LENS</span>
+                        <span class="font-mono text-[10px] text-gray-500 uppercase tracking-widest split-chars-dynamic">Color Grade</span>
                     </div>
                     <h2 class="text-[clamp(30px,3vw,48px)] font-black tracking-tighter mb-5 leading-tight transform translate-z-[60px] split-chars-dynamic">Cinematic Aesthetics</h2>
                     <p class="text-[15px] text-gray-400 leading-relaxed mb-10 transform translate-z-[50px] split-lines">Emulating professional camera setups. Utilizing deep color grading and environmental mapping to craft movie-grade atmospheres.</p>
@@ -301,45 +312,45 @@
         </div>
     </section>
 
-    <section class="px-[10vw] py-[15vh] relative z-10 border-t border-[rgba(255,255,255,0.05)] bg-[radial-gradient(circle_at_50%_100%,rgba(0,210,255,0.03)_0%,transparent_70%)]" id="arsenal">
-        <div class="text-center mb-[12vh] relative">
-            <span class="block font-mono text-xs text-[#00d2ff] uppercase tracking-[5px] mb-6">System Specs</span>
+    <section class="px-[10vw] py-[10vh] relative z-10 border-t border-[rgba(255,255,255,0.05)] bg-[radial-gradient(circle_at_50%_100%,rgba(0,210,255,0.03)_0%,transparent_70%)]" id="arsenal">
+        <div class="text-center mb-[8vh] relative">
+            <span class="block font-mono text-xs text-[#00d2ff] uppercase tracking-[5px] mb-6 split-chars-dynamic">System Specs</span>
             <h2 class="text-[clamp(50px,7vw,100px)] font-black uppercase tracking-[-3px] text-white split-lines">The Lab</h2>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-[3vw]">
-            <div class="glass-card p-[5vw] magnetic-trigger group flex flex-col justify-between hover:-translate-y-4 transition duration-500 hover:border-[#00d2ff]/30">
+            <div class="glass-card slide-left p-[5vw] magnetic-trigger group flex flex-col justify-between hover:-translate-y-4 transition duration-500 hover:border-[#00d2ff]/30">
                 <div class="flex justify-between items-start mb-10">
-                    <div class="font-mono font-black text-gray-500 border border-[rgba(255,255,255,0.05)] px-4 py-2 rounded-lg group-hover:text-[#00d2ff] transition">[AE]</div>
-                    <div class="font-mono text-[10px] text-[#00d2ff] flex items-center gap-2">
+                    <div class="font-mono font-black text-gray-500 border border-[rgba(255,255,255,0.05)] px-4 py-2 rounded-lg group-hover:text-[#00d2ff] transition split-chars-dynamic">[AE]</div>
+                    <div class="font-mono text-[10px] text-[#00d2ff] flex items-center gap-2 split-chars-dynamic">
                         <div class="w-1.5 h-1.5 bg-[#00d2ff] rounded-full shadow-[0_0_8px_rgba(0,210,255,0.6)] animate-pulse"></div> ONLINE
                     </div>
                 </div>
-                <h4 class="text-[clamp(24px,2vw,32px)] font-black mb-4 tracking-tight">Core Compositing</h4>
-                <p class="text-[15px] text-gray-400 leading-relaxed mb-8 font-normal">Heavy-duty timeline management, 3D camera mapping, and rendering executed within the industry standard post-production suite.</p>
-                <span class="font-mono text-[11px] px-5 py-2.5 bg-black border border-[rgba(255,255,255,0.05)] rounded inline-block text-[rgba(255,255,255,0.9)] tracking-widest self-start">AFTER EFFECTS CC</span>
+                <h4 class="text-[clamp(24px,2vw,32px)] font-black mb-4 tracking-tight split-chars-dynamic">Core Compositing</h4>
+                <p class="text-[15px] text-gray-400 leading-relaxed mb-8 font-normal split-lines">Heavy-duty timeline management, 3D camera mapping, and rendering executed within the industry standard post-production suite.</p>
+                <span class="font-mono text-[11px] px-5 py-2.5 bg-black border border-[rgba(255,255,255,0.05)] rounded inline-block text-[rgba(255,255,255,0.9)] tracking-widest self-start split-lines">AFTER EFFECTS CC</span>
             </div>
 
-            <div class="glass-card p-[5vw] magnetic-trigger group flex flex-col justify-between hover:-translate-y-4 transition duration-500 hover:border-[#00d2ff]/30">
+            <div class="glass-card slide-right p-[5vw] magnetic-trigger group flex flex-col justify-between hover:-translate-y-4 transition duration-500 hover:border-[#00d2ff]/30">
                 <div class="flex justify-between items-start mb-10">
-                    <div class="font-mono font-black text-gray-500 border border-[rgba(255,255,255,0.05)] px-4 py-2 rounded-lg group-hover:text-[#00d2ff] transition">[HW]</div>
-                    <div class="font-mono text-[10px] text-[#00d2ff] flex items-center gap-2">
+                    <div class="font-mono font-black text-gray-500 border border-[rgba(255,255,255,0.05)] px-4 py-2 rounded-lg group-hover:text-[#00d2ff] transition split-chars-dynamic">[HW]</div>
+                    <div class="font-mono text-[10px] text-[#00d2ff] flex items-center gap-2 split-chars-dynamic">
                         <div class="w-1.5 h-1.5 bg-[#00d2ff] rounded-full shadow-[0_0_8px_rgba(0,210,255,0.6)] animate-pulse"></div> OPTIMIZED
                     </div>
                 </div>
-                <h4 class="text-[clamp(24px,2vw,32px)] font-black mb-4 tracking-tight">Render Farm</h4>
-                <p class="text-[15px] text-gray-400 leading-relaxed mb-8 font-normal">Custom-built desktop workstation configured to handle dense RAM previews, heavy cache loads, and multi-layered rendering.</p>
-                <span class="font-mono text-[11px] px-5 py-2.5 bg-black border border-[rgba(255,255,255,0.05)] rounded inline-block text-[rgba(255,255,255,0.9)] tracking-widest self-start">RYZEN 5 5600G / 8GB</span>
+                <h4 class="text-[clamp(24px,2vw,32px)] font-black mb-4 tracking-tight split-chars-dynamic">Render Farm</h4>
+                <p class="text-[15px] text-gray-400 leading-relaxed mb-8 font-normal split-lines">Custom-built desktop workstation configured to handle dense RAM previews, heavy cache loads, and multi-layered rendering.</p>
+                <span class="font-mono text-[11px] px-5 py-2.5 bg-black border border-[rgba(255,255,255,0.05)] rounded inline-block text-[rgba(255,255,255,0.9)] tracking-widest self-start split-lines">RYZEN 5 5600G / 8GB</span>
             </div>
         </div>
     </section>
 
-    <footer class="px-[6vw] py-[15vh] border-t border-[rgba(255,255,255,0.05)] relative overflow-hidden bg-black flex flex-col justify-between min-h-[80vh]">
+    <footer class="px-[6vw] py-[10vh] border-t border-[rgba(255,255,255,0.05)] relative overflow-hidden bg-black flex flex-col justify-between min-h-[60vh]">
         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[22vw] font-black leading-[0.8] tracking-[-0.06em] text-transparent [-webkit-text-stroke:1px_rgba(255,255,255,0.02)] text-center select-none z-0 transition duration-500 hover:[-webkit-text-stroke:1px_rgba(0,210,255,0.1)] whitespace-nowrap">SANGRAM</div>
         <div class="relative z-10 flex flex-col justify-between h-full flex-grow">
             <div class="flex justify-between items-start">
                 <div class="text-left">
-                    <h2 class="text-[clamp(40px,4vw,60px)] font-black mb-5 tracking-tight">Initiate Contact</h2>
-                    <p class="text-[16px] text-gray-400 font-mono mb-8">Ready to create? Connect via email or social modules.</p>
+                    <h2 class="text-[clamp(40px,4vw,60px)] font-black mb-5 tracking-tight split-chars-dynamic">Initiate Contact</h2>
+                    <p class="text-[16px] text-gray-400 font-mono mb-8 split-lines">Ready to create? Connect via email or social modules.</p>
                     <a href="mailto:skgartia152@gmail.com" class="inline-block bg-white text-black px-12 py-4 rounded-full font-bold text-lg hover:bg-[#00d2ff] hover:text-white transition duration-300 transform active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(0,210,255,0.6)]">
                         Connect With Me
                     </a>
@@ -347,13 +358,25 @@
             </div>
             <div class="flex justify-between items-end border-t border-[rgba(255,255,255,0.1)] pt-10 mt-auto flex-wrap gap-10">
                 <div class="text-left">
-                    <h3 class="text-[20px] font-extrabold tracking-widest uppercase mb-3">Sangram Keshari</h3>
-                    <p class="text-gray-500 text-[12px] font-mono tracking-widest">SYSTEM STATUS: RENDER COMPLETE // CRAFTED WITH LOGIC AND LIGHT</p>
+                    <h3 class="text-[20px] font-extrabold tracking-widest uppercase mb-3 split-chars-dynamic">Sangram Keshari</h3>
+                    <p class="text-gray-500 text-[12px] font-mono tracking-widest split-lines">SYSTEM STATUS: RENDER COMPLETE // CRAFTED WITH LOGIC AND LIGHT</p>
                 </div>
-                <div class="flex gap-10">
-                    <div class="magnetic-wrap"><a href="https://www.youtube.com/@SangramOfficial" target="_blank" class="text-white no-underline text-[13px] font-semibold uppercase tracking-widest relative pb-2 overflow-hidden inline-block magnetic-elem hover:text-[#00d2ff]">YouTube</a></div>
-                    <div class="magnetic-wrap"><a href="https://www.instagram.com/sngrm.fx" target="_blank" class="text-white no-underline text-[13px] font-semibold uppercase tracking-widest relative pb-2 overflow-hidden inline-block magnetic-elem hover:text-[#00d2ff]">Instagram</a></div>
-                    <div class="magnetic-wrap"><a href="https://discord.com/invite/kKM75jmQwu" target="_blank" class="text-white no-underline text-[13px] font-semibold uppercase tracking-widest relative pb-2 overflow-hidden inline-block magnetic-elem hover:text-[#00d2ff]">Discord</a></div>
+                <div class="flex gap-4">
+                    <div class="magnetic-wrap">
+                        <a href="https://www.youtube.com/@SangramOfficial" target="_blank" class="social-btn magnetic-elem">
+                            <i class="fa-brands fa-youtube text-xl"></i>
+                        </a>
+                    </div>
+                    <div class="magnetic-wrap">
+                        <a href="https://www.instagram.com/sngrm.fx" target="_blank" class="social-btn magnetic-elem">
+                            <i class="fa-brands fa-instagram text-xl"></i>
+                        </a>
+                    </div>
+                    <div class="magnetic-wrap">
+                        <a href="https://discord.com/invite/kKM75jmQwu" target="_blank" class="social-btn magnetic-elem">
+                            <i class="fa-brands fa-discord text-xl"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -384,7 +407,7 @@
 
         // 3. TERMINAL BOOT PRELOADER
         const termBody = document.getElementById('term-body');
-        const termLines = ["Connecting to local server...", "Synthesizing Chemistry & Visuals... OK", "Fetching 3D Model: phoenix_bird.glb... OK", "Compiling Gojo Blue Shaders... OK", "Allocating Video RAM... OK", "Initializing Main Sequence..."];
+        const termLines = ["Connecting to local server...", "Synthesizing Chemistry & Visuals... OK", "Loading Environmental Fillers... OK", "Compiling Gojo Blue Shaders... OK", "Allocating Video RAM... OK", "Initializing Main Sequence..."];
         const counterText = document.querySelector('.loader-math');
         const fillBar = document.querySelector('.loader-bar-fill');
         let loadProgress = 0, lineIndex = 0;
@@ -413,7 +436,7 @@
                 onComplete: () => {
                     document.querySelector('.preloader').style.display = 'none';
                     lenis.start(); 
-                    gsap.to('.model-container', { opacity: 1, scale: 1, y: 0, duration: 2.5, ease: "power3.out" });
+                    gsap.to('.model-container', { opacity: 0.3, duration: 2.5, ease: "power3.out" }); // Soft reveal for background bird
                 }
             });
             
@@ -493,6 +516,7 @@
         });
         document.querySelectorAll('.magnetic-wrap').forEach(wrap => {
             const elem = wrap.querySelector('.magnetic-elem');
+            if(!elem) return;
             wrap.addEventListener('mousemove', (e) => {
                 const rect = wrap.getBoundingClientRect();
                 const dx = (e.clientX - (rect.left + rect.width / 2)) * 0.4; const dy = (e.clientY - (rect.top + rect.height / 2)) * 0.4;
@@ -519,7 +543,7 @@
             wrapper.appendChild(inner); el.appendChild(wrapper);
         });
 
-        // 9. ADVANCED SCROLLTRIGGERS
+        // 9. ADVANCED SCROLLTRIGGERS (Slide-In Elements + Text Sequence)
         const skewElems = document.querySelectorAll('.skew-elem');
         gsap.ticker.add(() => {
             const skewAmount = scrollVelocity * 0.15; 
@@ -531,31 +555,36 @@
             ScrollTrigger.create({ trigger: sec, start: "top 50%", end: "bottom 50%", onEnter: () => gsap.to("body", { backgroundColor: bgColor, duration: 1.5 }), onEnterBack: () => gsap.to("body", { backgroundColor: bgColor, duration: 1.5 }) });
         });
 
-        document.querySelectorAll('.skew-elem').forEach((sec) => {
-            gsap.to(sec.querySelectorAll('.gsap-char'), { scrollTrigger: { trigger: sec, start: "top 75%" }, y: '0%', duration: 1.5, stagger: 0.04, ease: "power4.out" });
-            gsap.to(sec.querySelectorAll('.gsap-line'), { scrollTrigger: { trigger: sec, start: "top 75%" }, y: '0%', duration: 1.5, stagger: 0.1, ease: "power4.out", delay: 0.2 });
-            ScrollTrigger.create({ trigger: sec, start: "top 60%", onEnter: () => { 
-                let card = sec.querySelector('.glass-card'); if(card) card.classList.add('saber-active'); 
-            } });
+        // Slide Left Animations
+        gsap.utils.toArray('.slide-left').forEach(el => {
+            gsap.fromTo(el, { x: -100, opacity: 0 }, { scrollTrigger: { trigger: el, start: "top 85%" }, x: 0, opacity: 1, duration: 1.5, ease: "power3.out" });
+        });
+
+        // Slide Right Animations
+        gsap.utils.toArray('.slide-right').forEach(el => {
+            gsap.fromTo(el, { x: 100, opacity: 0 }, { scrollTrigger: { trigger: el, start: "top 85%" }, x: 0, opacity: 1, duration: 1.5, ease: "power3.out" });
+        });
+        
+        // Slide Up Animations (For Middle Content)
+        gsap.utils.toArray('.slide-up').forEach(el => {
+            gsap.fromTo(el, { y: 50, opacity: 0 }, { scrollTrigger: { trigger: el, start: "top 85%" }, y: 0, opacity: 1, duration: 1.5, ease: "power3.out" });
+        });
+
+        // Text & Sweep Animations triggered after the containers slide in
+        document.querySelectorAll('.glass-card, .about-text, footer').forEach((sec) => {
+            // Slight delay (0.4s) on the text stagger so the card sliding finishes its initial movement first
+            gsap.to(sec.querySelectorAll('.gsap-char'), { scrollTrigger: { trigger: sec, start: "top 80%" }, y: '0%', duration: 1, stagger: 0.02, ease: "power4.out", delay: 0.4 });
+            gsap.to(sec.querySelectorAll('.gsap-line'), { scrollTrigger: { trigger: sec, start: "top 80%" }, y: '0%', duration: 1, stagger: 0.1, ease: "power4.out", delay: 0.5 });
+            
+            ScrollTrigger.create({ trigger: sec, start: "top 70%", onEnter: () => { 
+                if(sec.classList.contains('glass-card')) sec.classList.add('saber-active'); 
+            }});
 
             const sweepElement = sec.querySelector('.cc-light-sweep');
             if (sweepElement) {
                 gsap.to(sweepElement, { scrollTrigger: { trigger: sec, start: "top bottom", end: "bottom top", scrub: 1 }, left: "200%", ease: "none" });
             }
         });
-
-        // 10. THE MASTER 3D FLIGHT PATH
-        const modelEl = document.getElementById('phoenix-model');
-        const rot = { pitch: 0, yaw: 0, roll: 0 }; 
-        const updateModel3D = () => { if(modelEl.setAttribute) modelEl.setAttribute('orientation', `${rot.pitch}deg ${rot.yaw}deg ${rot.roll}deg`); };
-
-        let flightPath = gsap.timeline({ scrollTrigger: { trigger: "#work", start: "top 90%", endTrigger: "#arsenal", end: "top 40%", scrub: 2.5 } });
-        flightPath.to(".model-container", { x: "40vw", y: "20vh", scale: 1.2, ease: "sine.inOut" }, "f1")
-          .to(rot, { pitch: 15, yaw: 25, roll: -20, onUpdate: updateModel3D, ease: "sine.inOut" }, "f1")
-        .to(".model-container", { x: "10vw", y: "60vh", scale: 0.9, ease: "sine.inOut" }, "f2")
-        .to(rot, { pitch: -5, yaw: -160, roll: 20, onUpdate: updateModel3D, ease: "sine.inOut" }, "f2")
-        .to(".model-container", { x: "30vw", y: "90vh", scale: 1.6, ease: "power1.inOut" }, "f5")
-        .to(rot, { pitch: 35, yaw: -20, roll: -15, onUpdate: updateModel3D, ease: "power1.inOut" }, "f5");
 
     </script>
 </body>
