@@ -3,363 +3,629 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sangram | Motion & VFX</title>
+    <title>Sangram | Elite Motion Design</title>
     
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
+        /* ==========================================================================
+           1. CSS VARIABLES & SYSTEM RESET
+           ========================================================================== */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
         :root {
-            --bg-dark: #03070E;
-            --bg-light: #12284C;
-            --accent: #90E0AF;
-            --text-main: #FFFFFF;
-            --text-muted: rgba(255, 255, 255, 0.5);
-            --ease-out: cubic-bezier(0.16, 1, 0.3, 1); 
+            /* Dynamic Background Colors (Animated by GSAP) */
+            --bg-deep: #02050A;
+            --bg-mid: #0A1424;
+            
+            /* Accents */
+            --accent-primary: #90E0AF;
+            --accent-secondary: #4A88D9;
+            --text-pure: #FFFFFF;
+            --text-dim: rgba(255, 255, 255, 0.55);
+            
+            /* UI Elements */
+            --glass-bg: rgba(255, 255, 255, 0.015);
+            --glass-border: rgba(255, 255, 255, 0.04);
+            --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; cursor: none; /* Hide default cursor */ }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+        
+        /* Lenis Required CSS */
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: hidden; }
 
         body {
-            background: radial-gradient(circle at 50% 0%, var(--bg-light) 0%, var(--bg-dark) 100%);
-            color: var(--text-main);
+            background-color: var(--bg-deep);
+            color: var(--text-pure);
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
-            line-height: 1.6;
-            background-attachment: fixed;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 1s ease;
         }
 
-        /* --- PRELOADER --- */
-        .preloader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            background: #000; z-index: 9999; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; color: #fff;
-            transition: opacity 1s var(--ease-out);
-        }
-        .preloader-text { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--text-muted); margin-bottom: 20px; letter-spacing: 2px; text-transform: uppercase; }
-        .counter { font-family: 'JetBrains Mono', monospace; font-size: 80px; font-weight: 700; letter-spacing: -2px; }
-        .progress-bar { width: 200px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 20px; position: relative; overflow: hidden; }
-        .progress-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--accent); }
-
-        /* --- CINEMATIC FILM GRAIN --- */
-        .noise-overlay {
+        /* ==========================================================================
+           2. WEBGL-STYLE CANVAS BACKGROUND & EFFECTS
+           ========================================================================== */
+        #ambient-canvas {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            pointer-events: none; z-index: 9000; opacity: 0.04;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            z-index: -2; pointer-events: none;
         }
 
-        /* --- CUSTOM CURSOR --- */
-        .cursor-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 10000; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s; }
-        .cursor-ring { width: 36px; height: 36px; border: 1px solid rgba(144, 224, 175, 0.5); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s, background 0.3s; }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-
-        /* Navigation */
-        nav { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 30px 8%; position: fixed; top: 0; width: 100%; 
-            z-index: 100; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            background: rgba(3, 7, 14, 0.5); border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .logo { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 12px; letter-spacing: 2px; }
-        .profile-pic { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255, 255, 255, 0.3); }
-        .nav-links { display: flex; gap: 40px; }
-        .nav-links a { color: var(--text-main); text-decoration: none; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; transition: 0.3s; }
-        .nav-links a:hover { opacity: 1; color: var(--accent); }
-
-        /* Hero Section */
-        .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px; position: relative; }
-        .subtitle { text-transform: uppercase; letter-spacing: 4px; font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 20px; opacity: 0; transform: translateY(20px); }
-        .hero h1 { 
-            font-size: clamp(60px, 10vw, 140px); font-weight: 800; letter-spacing: -3px; line-height: 0.9; margin-bottom: 40px; text-transform: uppercase;
-            background: linear-gradient(180deg, #FFFFFF 0%, rgba(255,255,255,0.3) 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            opacity: 0; transform: translateY(40px); 
+        /* CSS Gradient Overlay */
+        .gradient-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 0%, var(--bg-mid) 0%, transparent 80%);
+            z-index: -1; pointer-events: none; mix-blend-mode: screen;
+            transition: background 1s ease;
         }
 
-        .about-section { max-width: 800px; margin: 0 auto 150px; padding: 0 8%; text-align: center; opacity: 0; transform: translateY(30px); }
-        .about-section p { font-size: clamp(18px, 2vw, 24px); color: var(--text-muted); line-height: 1.8; font-weight: 300; }
-        .about-section strong { color: var(--text-main); font-weight: 600; }
+        /* Cinematic Noise */
+        .noise {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 9998; opacity: 0.035; mix-blend-mode: overlay;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
 
-        /* --- THE 3D MODEL CONTAINER --- */
+        /* Scroll Progress Bar */
+        .scroll-progress-container {
+            position: fixed; right: 2vw; top: 50%; transform: translateY(-50%);
+            height: 40vh; width: 2px; background: rgba(255,255,255,0.1);
+            z-index: 9000; border-radius: 4px; overflow: hidden;
+        }
+        .scroll-progress-fill {
+            position: absolute; top: 0; left: 0; width: 100%; height: 0%;
+            background: var(--accent-primary); box-shadow: 0 0 10px var(--accent-primary);
+        }
+
+        /* ==========================================================================
+           3. ADVANCED MAGNETIC CURSOR
+           ========================================================================== */
+        .cursor-dot {
+            width: 6px; height: 6px; background: var(--accent-primary);
+            border-radius: 50%; position: fixed; top: 0; left: 0;
+            pointer-events: none; z-index: 10000; transform: translate(-50%, -50%);
+            transition: opacity 0.3s, transform 0.1s;
+        }
+        .cursor-ring {
+            width: 40px; height: 40px; border: 1px solid rgba(144, 224, 175, 0.4);
+            border-radius: 50%; position: fixed; top: 0; left: 0;
+            pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
+            transition: width 0.4s var(--ease-apple), height 0.4s var(--ease-apple), background 0.4s var(--ease-apple), border-color 0.4s;
+        }
+        .cursor-hover .cursor-ring { width: 80px; height: 80px; background: rgba(144, 224, 175, 0.05); border-color: transparent; backdrop-filter: blur(2px); }
+        .cursor-hover .cursor-dot { transform: translate(-50%, -50%) scale(0.5); }
+
+        /* ==========================================================================
+           4. DATA-SYNC PRELOADER
+           ========================================================================== */
+        .preloader {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; z-index: 100000; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+        }
+        .loader-brand { font-size: 12px; font-weight: 800; letter-spacing: 6px; margin-bottom: 40px; color: var(--text-dim); }
+        .loader-math { font-family: 'JetBrains Mono', monospace; font-size: 120px; font-weight: 700; letter-spacing: -4px; line-height: 1; }
+        .loader-bar-bg { width: 300px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 30px; position: relative; overflow: hidden; }
+        .loader-bar-fill { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--accent-primary); box-shadow: 0 0 15px var(--accent-primary); transition: width 0.2s ease-out; }
+        .loader-status { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent-primary); margin-top: 20px; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* ==========================================================================
+           5. NAVIGATION & HERO
+           ========================================================================== */
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%; padding: 30px 6vw;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 5000; mix-blend-mode: difference;
+        }
+        .nav-logo { display: flex; align-items: center; gap: 15px; }
+        .nav-logo img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; filter: grayscale(100%) contrast(1.2); transition: filter 0.5s; }
+        .nav-logo:hover img { filter: grayscale(0%) contrast(1); }
+        .nav-logo span { font-size: 16px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; }
+        
+        .nav-links { display: flex; gap: 10px; }
+        .magnetic-wrap { padding: 10px 20px; display: inline-block; position: relative; }
+        .magnetic-wrap a { color: var(--text-pure); text-decoration: none; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.7; transition: opacity 0.3s; display: inline-block; }
+        .magnetic-wrap:hover a { opacity: 1; color: var(--accent-primary); }
+
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 0 6vw; }
+        .hero-tagline { font-family: 'JetBrains Mono', monospace; color: var(--accent-primary); font-size: 12px; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 3vh; overflow: hidden; }
+        .hero-title {
+            font-size: clamp(60px, 12vw, 180px); font-weight: 800; line-height: 0.85;
+            letter-spacing: -0.04em; text-transform: uppercase; text-align: center;
+            background: linear-gradient(180deg, #FFFFFF 0%, rgba(255,255,255,0.4) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 2vh;
+        }
+        
+        .scroll-indicator { position: absolute; bottom: 5vh; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 15px; opacity: 0.5; }
+        .scroll-indicator span { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; font-weight: 600; }
+        .scroll-line { width: 1px; height: 60px; background: rgba(255,255,255,0.2); position: relative; overflow: hidden; }
+        .scroll-line::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 50%; background: var(--text-pure); animation: scrollDrop 2s cubic-bezier(0.77, 0, 0.175, 1) infinite; }
+        @keyframes scrollDrop { 0% { transform: translateY(-100%); } 100% { transform: translateY(200%); } }
+
+        /* ==========================================================================
+           6. THE MASTER 3D CONTAINER (Fixed Visibility)
+           ========================================================================== */
         .model-container {
-            position: fixed; top: 10vh; left: 0vw; width: 600px; height: 600px; z-index: 50; 
-            pointer-events: none; perspective: 1200px; transform: scale(0.8); opacity: 0; 
+            position: fixed; top: 10vh; left: 0; width: 600px; height: 600px;
+            z-index: 50; pointer-events: none; perspective: 1500px;
+            visibility: hidden; opacity: 0; /* JS will explicitly reveal this */
+            transform: scale(0.8) translateY(50px);
         }
+        .model-floater { width: 100%; height: 100%; animation: organicFloat 6s ease-in-out infinite; }
+        @keyframes organicFloat { 0%, 100% { transform: translateY(0) rotateX(0deg); } 50% { transform: translateY(-20px) rotateX(3deg); } }
+        
         model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
 
-        /* Premium Glassmorphism Layout */
-        .portfolio-sections { padding: 0 8% 100px; display: flex; flex-direction: column; gap: 250px; position: relative; }
-        .portfolio-sections::before { content: ''; position: absolute; top: 0; left: 50%; width: 1px; height: 100%; background: linear-gradient(180deg, transparent, rgba(255,255,255,0.1), transparent); z-index: -1; }
-        
-        .section-block { display: flex; width: 100%; align-items: center; }
+        /* ==========================================================================
+           7. 3D PARALLAX PORTFOLIO LAYOUT
+           ========================================================================== */
+        .portfolio-sections { padding: 15vh 10vw 25vh; display: flex; flex-direction: column; gap: 30vh; position: relative; }
+        .spine-line { position: absolute; top: 0; left: 50%; width: 1px; height: 100%; background: linear-gradient(180deg, transparent, rgba(255,255,255,0.1), transparent); z-index: -1; transform: translateX(-50%); }
+
+        .section-block { display: flex; width: 100%; align-items: center; perspective: 1500px; }
         .section-block:nth-child(odd) { justify-content: flex-end; }
         .section-block:nth-child(even) { justify-content: flex-start; }
-        
-        .content-box { 
-            width: 45%; display: flex; flex-direction: column; position: relative; z-index: 10;
-            background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.05); padding: 50px; border-radius: 24px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+
+        /* Advanced Mouse-Tracking Glass Cards with 3D Rotate */
+        .glass-card {
+            width: 45%; padding: 3vw; border-radius: 24px; position: relative; z-index: 10;
+            background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 40px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            transform-style: preserve-3d; transition: transform 0.1s ease-out; /* For JS Tilt */
         }
-
-        .content-box h2 { font-size: clamp(28px, 3vw, 42px); font-weight: 800; margin-bottom: 20px; letter-spacing: -1px; overflow: hidden; display: flex; flex-wrap: wrap; line-height: 1.1; }
-        .content-box h2 span { display: inline-block; transform: translateY(110%); opacity: 0; will-change: transform, opacity; }
-        .content-box .number { font-size: 80px; font-weight: 800; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.2); line-height: 0.8; margin-bottom: 20px; transform: translateY(30px); opacity: 0; }
-        .content-box p { color: var(--text-muted); font-size: 16px; margin-bottom: 30px; transform: translateY(20px); opacity: 0; }
-        
-        .video-wrapper { border-radius: 12px; overflow: hidden; transform: scale(0.95); opacity: 0; border: 1px solid rgba(255,255,255,0.1); }
-        video { width: 100%; display: block; filter: brightness(0.9); transition: filter 0.5s; }
-        .content-box:hover video { filter: brightness(1.1); }
-
-        .content-box.show .number { opacity: 1; transform: translateY(0); transition: all 1s var(--ease-out); }
-        .content-box.show p { opacity: 1; transform: translateY(0); transition: all 1s var(--ease-out) 0.3s; }
-        .content-box.show .video-wrapper { opacity: 1; transform: scale(1); transition: all 1.2s var(--ease-out) 0.4s; }
-        .content-box.show h2 span { transform: translateY(0); opacity: 1; }
-
-        /* --- THE ARSENAL (Tech Stack) --- */
-        .tech-stack { padding: 100px 8% 200px; position: relative; z-index: 10; text-align: center; }
-        .tech-title { font-size: 14px; text-transform: uppercase; letter-spacing: 4px; color: var(--accent); margin-bottom: 60px; }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto; }
-        .tech-card {
-            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 40px 30px; border-radius: 16px; text-align: left;
-            transition: transform 0.4s var(--ease-out), background 0.4s;
+        .glass-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 24px;
+            background: radial-gradient(600px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255,255,255,0.06), transparent 40%);
+            z-index: -1; transition: opacity 0.5s; opacity: 0; pointer-events: none;
         }
-        .tech-card:hover { transform: translateY(-10px); background: rgba(255, 255, 255, 0.05); }
-        .tech-card h4 { font-size: 20px; font-weight: 700; margin-bottom: 10px; color: #fff; }
-        .tech-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
-        .tech-card .mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); margin-top: 15px; display: block; }
+        .glass-card:hover::before { opacity: 1; }
 
-        footer { padding: 80px 8% 40px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: flex-end; }
-        .social-links a { color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; text-decoration: none; transition: 0.3s; margin-left: 20px; }
-        .social-links a:hover { color: var(--text-main); }
+        .card-num { font-family: 'JetBrains Mono', monospace; font-size: 16px; color: var(--accent-primary); margin-bottom: 20px; display: block; border-bottom: 1px solid var(--glass-border); padding-bottom: 15px; transform: translateZ(30px); }
+        .card-title { font-size: clamp(32px, 3.5vw, 48px); font-weight: 800; letter-spacing: -1px; margin-bottom: 20px; line-height: 1.1; transform: translateZ(50px); }
+        .card-desc { font-size: 16px; color: var(--text-dim); line-height: 1.7; margin-bottom: 40px; font-weight: 300; transform: translateZ(40px); }
 
-        /* Link hover class for JS cursor */
-        .hover-active { cursor: none; }
+        .video-box {
+            border-radius: 12px; overflow: hidden; position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            transform: translateZ(60px); /* Pops out in 3D */
+            transition: box-shadow 0.6s var(--ease-apple);
+        }
+        .glass-card:hover .video-box { box-shadow: 0 40px 60px rgba(0,0,0,0.5); }
+        .video-box video { width: 100%; display: block; filter: brightness(0.85) contrast(1.1); transition: filter 0.6s; }
+        .glass-card:hover .video-box video { filter: brightness(1) contrast(1.05); }
+
+        /* ==========================================================================
+           8. PIPELINE & TECH STACK
+           ========================================================================== */
+        .pipeline { padding: 10vh 10vw 20vh; position: relative; z-index: 10; }
+        .section-header { text-align: center; margin-bottom: 10vh; }
+        .sh-small { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 3px; display: block; margin-bottom: 15px; }
+        .sh-large { font-size: clamp(40px, 5vw, 80px); font-weight: 800; text-transform: uppercase; letter-spacing: -2px; }
+
+        .arsenal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2vw; }
+        .tech-item {
+            padding: 4vw; background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid var(--glass-border); border-radius: 20px; position: relative; overflow: hidden;
+            transition: transform 0.5s var(--ease-apple), border-color 0.5s;
+        }
+        .tech-item:hover { transform: translateY(-10px); border-color: rgba(255,255,255,0.15); }
+        .tech-icon { font-size: 24px; color: var(--accent-primary); margin-bottom: 20px; font-family: 'JetBrains Mono', monospace; }
+        .tech-item h4 { font-size: 24px; font-weight: 700; margin-bottom: 15px; }
+        .tech-item p { font-size: 15px; color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; }
+        .tech-spec { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 6px 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; display: inline-block; color: var(--accent-primary); }
+
+        /* ==========================================================================
+           9. MASSIVE FOOTER
+           ========================================================================== */
+        footer { padding: 15vh 6vw 5vh; border-top: 1px solid var(--glass-border); position: relative; overflow: hidden; }
+        .footer-giant { font-size: 18vw; font-weight: 800; line-height: 0.8; letter-spacing: -0.05em; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.05); text-align: center; margin-bottom: 10vh; user-select: none; }
+        .footer-bottom { display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 40px; }
+        .fb-left h3 { font-size: 20px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+        .fb-left p { color: var(--text-dim); font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+        .socials { display: flex; gap: 30px; }
+        .social-link { color: var(--text-pure); text-decoration: none; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; position: relative; padding-bottom: 5px; overflow: hidden; display: inline-block; }
+        .social-link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background: var(--accent-primary); transform: translateX(-101%); transition: transform 0.4s var(--ease-apple); }
+        .social-link:hover::after { transform: translateX(0); }
 
         @media (max-width: 1024px) {
             .section-block { justify-content: center !important; }
-            .content-box { width: 100%; max-width: 600px; padding: 30px; }
-            .portfolio-sections::before { display: none; }
-            .model-container { display: none; } 
-            .cursor-dot, .cursor-ring { display: none; } /* No custom cursor on mobile */
+            .glass-card { width: 100%; transform: none !important; } /* Disable tilt on mobile */
+            .spine-line { display: none; }
+            .model-container { display: none; } /* Hide heavy 3D */
+            .cursor-dot, .cursor-ring { display: none; } 
+            * { cursor: auto; }
+            .arsenal-grid { grid-template-columns: 1fr; }
+            .scroll-progress-container { display: none; }
         }
     </style>
 </head>
 <body>
 
-    <div class="noise-overlay"></div>
-
+    <canvas id="ambient-canvas"></canvas>
+    <div class="gradient-bg"></div>
+    <div class="noise"></div>
+    
     <div class="cursor-dot"></div>
     <div class="cursor-ring"></div>
 
+    <div class="scroll-progress-container">
+        <div class="scroll-progress-fill"></div>
+    </div>
+
     <div class="preloader">
-        <div class="preloader-text">Rendering RAM Preview...</div>
-        <div class="counter">0%</div>
-        <div class="progress-bar"><div class="progress-fill"></div></div>
+        <div class="loader-brand">SANGRAM.SYS</div>
+        <div class="loader-math">000</div>
+        <div class="loader-bar-bg"><div class="loader-bar-fill"></div></div>
+        <div class="loader-status">Fetching 3D Geometry...</div>
     </div>
 
     <div class="model-container">
-        <model-viewer src="phoenix_bird.glb" autoplay camera-controls="false" disable-zoom exposure="1.2" shadow-intensity="2" shadow-softness="1"></model-viewer>
+        <div class="model-floater">
+            <model-viewer id="phoenix-model" src="phoenix_bird.glb" autoplay camera-controls="false" disable-zoom exposure="1.5" shadow-intensity="2" shadow-softness="1"></model-viewer>
+        </div>
     </div>
 
     <nav>
-        <div class="logo"><img src="profile.jpg" alt="Sangram" class="profile-pic"> SANGRAM</div>
-        <div class="nav-links"><a href="#about">About</a><a href="#work">Work</a><a href="#arsenal">Arsenal</a></div>
+        <div class="nav-logo magnetic-wrap">
+            <img src="profile.jpg" alt="Sangram Profile" class="magnetic-elem">
+            <span class="magnetic-elem">Sangram</span>
+        </div>
+        <div class="nav-links">
+            <div class="magnetic-wrap"><a href="#work" class="magnetic-elem">Work</a></div>
+            <div class="magnetic-wrap"><a href="#arsenal" class="magnetic-elem">Tech</a></div>
+        </div>
     </nav>
 
     <header class="hero">
-        <div class="subtitle">Creative Works Of</div>
-        <h1>Motion<br>Graphics</h1>
+        <div class="hero-tagline split-chars">B.Sc Chemist // Motion Editor</div>
+        <h1 class="hero-title">
+            <div class="split-lines">Motion</div>
+            <div class="split-lines">Graphics</div>
+        </h1>
+        <div class="scroll-indicator">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
     </header>
 
-    <section class="about-section" id="about">
-        <p>
-            I am a 21-year-old Motion Designer based in Odisha. My journey into visual storytelling is unconventional—I graduated with a <strong>B.Sc. in Chemistry</strong>. But the exact same analytical precision required in science is what drives my technical approach to After Effects. Whether I am building heavy-duty PC rigs, emulating the cinematic depth of Sony lenses, or rhythm-syncing high-octane VFX, I treat every frame like an equation waiting to be solved.
-        </p>
-    </section>
-
-    <section id="work" class="portfolio-sections">
+    <section class="portfolio-sections" id="work" data-bgcolor="#0A1424">
+        <div class="spine-line"></div>
         
         <div class="section-block">
-            <div class="content-box">
-                <div class="number">01</div>
-                <h2 class="split-text">VFX Integration</h2>
-                <p>Advanced compositing and visual effects built entirely within After Effects, pushing the boundaries of raw footage and physical reality.</p>
-                <div class="video-wrapper"><video autoplay loop muted playsinline><source src="B1Meteor.mp4" type="video/mp4"></video></div>
+            <div class="glass-card magnetic-trigger tilt-card">
+                <span class="card-num">// 001. VFX</span>
+                <h2 class="card-title split-lines">VFX Integration & Compositing</h2>
+                <p class="card-desc">Pushing the boundaries of raw footage. Advanced node and layer-based visual effects built to augment physical reality seamlessly.</p>
+                <div class="video-box"><video autoplay loop muted playsinline><source src="B1Meteor.mp4" type="video/mp4"></video></div>
             </div>
         </div>
 
-        <div class="section-block">
-            <div class="content-box">
-                <div class="number">02</div>
-                <h2 class="split-text">Cinematic Aesthetics</h2>
-                <p>Emulating professional camera setups, deep color grading, and environmental lighting to create movie-like, immersive atmospheres.</p>
-                <div class="video-wrapper"><video autoplay loop muted playsinline><source src="B2Beach.mp4" type="video/mp4"></video></div>
+        <div class="section-block" data-bgcolor="#050C16">
+            <div class="glass-card magnetic-trigger tilt-card">
+                <span class="card-num">// 002. LENS</span>
+                <h2 class="card-title split-lines">Cinematic Lighting & Aesthetics</h2>
+                <p class="card-desc">Emulating professional camera setups. Utilizing deep color grading and environmental mapping to craft movie-grade atmospheres.</p>
+                <div class="video-box"><video autoplay loop muted playsinline><source src="B2Beach.mp4" type="video/mp4"></video></div>
             </div>
         </div>
 
-        <div class="section-block">
-            <div class="content-box">
-                <div class="number">03</div>
-                <h2 class="split-text">Trend & Pacing</h2>
-                <p>High-impact, fast-paced edits designed to capture attention instantly. Driven by seamless transitions and heavy rhythm syncing.</p>
-                <div class="video-wrapper"><video autoplay loop muted playsinline><source src="B3Tiki.mp4" type="video/mp4"></video></div>
+        <div class="section-block" data-bgcolor="#02050A">
+            <div class="glass-card magnetic-trigger tilt-card">
+                <span class="card-num">// 003. FLOW</span>
+                <h2 class="card-title split-lines">Trend Sync & Pacing</h2>
+                <p class="card-desc">High-impact editing calculated to hold retention. Driven by hyper-smooth transitions, speed ramping, and heavy audio rhythm synchronization.</p>
+                <div class="video-box"><video autoplay loop muted playsinline><source src="B3Tiki.mp4" type="video/mp4"></video></div>
             </div>
         </div>
 
-        <div class="section-block">
-            <div class="content-box">
-                <div class="number">04</div>
-                <h2 class="split-text">Kinetic Typography</h2>
-                <p>Transforming text into a dynamic visual element. Creating fluid motion profiles that communicate style as much as information.</p>
-                <div class="video-wrapper"><video autoplay loop muted playsinline><source src="B4Sngrm.mp4" type="video/mp4"></video></div>
+        <div class="section-block" data-bgcolor="#000000">
+            <div class="glass-card magnetic-trigger tilt-card">
+                <span class="card-num">// 004. TYPO</span>
+                <h2 class="card-title split-lines">Kinetic Typographic Systems</h2>
+                <p class="card-desc">Transforming static text into a physical element. Engineering fluid motion profiles that communicate style, hierarchy, and information simultaneously.</p>
+                <div class="video-box"><video autoplay loop muted playsinline><source src="B4Sngrm.mp4" type="video/mp4"></video></div>
             </div>
         </div>
-
     </section>
 
-    <section class="tech-stack" id="arsenal">
-        <div class="tech-title">// The Arsenal</div>
-        <div class="grid-container">
-            <div class="tech-card">
-                <h4>Compositing Core</h4>
-                <p>Advanced timeline management, 3D camera tracking, and heavy-duty rendering handled inside the industry standard.</p>
-                <span class="mono">SOFTWARE: AFTER EFFECTS</span>
+    <section class="pipeline" id="arsenal">
+        <div class="section-header">
+            <span class="sh-small">System Specs</span>
+            <h2 class="sh-large split-lines">The Arsenal</h2>
+        </div>
+        <div class="arsenal-grid">
+            <div class="tech-item magnetic-trigger">
+                <div class="tech-icon">[AE]</div>
+                <h4>Core Compositing</h4>
+                <p>Heavy-duty timeline management, 3D camera mapping, and rendering executed within the industry standard post-production suite.</p>
+                <span class="tech-spec">AFTER EFFECTS CC</span>
             </div>
-            <div class="tech-card">
-                <h4>Mobile & Node Editing</h4>
-                <p>Seamless on-the-go editing and node-based compositing for rapid, high-impact social and trend formatting.</p>
-                <span class="mono">CAPCUT & NODE VIDEO</span>
+            <div class="tech-item magnetic-trigger">
+                <div class="tech-icon">[MOB]</div>
+                <h4>Mobile & Node Systems</h4>
+                <p>Rapid deployment editing and node-based compositing designed for high-end social formatting on the fly.</p>
+                <span class="tech-spec">NODE VIDEO / CAPCUT</span>
             </div>
-            <div class="tech-card">
-                <h4>Hardware Engine</h4>
-                <p>Custom-built rendering workstation specifically tuned for handling massive caches and fast preview times.</p>
-                <span class="mono">AMD RYZEN 5 5600G / GIGABYTE B450M</span>
+            <div class="tech-item magnetic-trigger">
+                <div class="tech-icon">[HW]</div>
+                <h4>Rendering Engine</h4>
+                <p>Custom-built desktop workstation configured to handle dense RAM previews, heavy cache loads, and multi-layered rendering.</p>
+                <span class="tech-spec">RYZEN 5 5600G / 8GB / B450M</span>
             </div>
-            <div class="tech-card">
-                <h4>Mobile Optics</h4>
-                <p>High-end mobile videography capable of shooting deep color profiles ready for intense post-production grading.</p>
-                <span class="mono">SAMSUNG GALAXY S24 FE</span>
+            <div class="tech-item magnetic-trigger">
+                <div class="tech-icon">[CAM]</div>
+                <h4>Optical Capture</h4>
+                <p>Shooting deep, flexible color profiles ready for intense post-production grading and AI-enhanced scaling.</p>
+                <span class="tech-spec">SAMSUNG S24 FE</span>
             </div>
         </div>
     </section>
 
     <footer>
-        <div>
-            <h3 style="font-size: 16px; font-weight: 800; letter-spacing: 1px;">SANGRAM</h3>
-            <p style="color: var(--text-muted); font-size: 12px; margin-top: 5px;">© 2026. Bargarh, Odisha.</p>
-        </div>
-        <div class="social-links">
-            <a href="https://www.youtube.com/@SANGRAMYT" target="_blank">YouTube</a>
-            <a href="https://www.instagram.com/iamsngrm" target="_blank">Instagram</a>
-            <a href="https://discord.com/invite/kKM75jmQwu" target="_blank">Discord</a>
+        <div class="footer-giant">SANGRAM</div>
+        <div class="footer-bottom">
+            <div class="fb-left">
+                <h3>Sangram Keshari</h3>
+                <p>STATUS: RENDER COMPLETE // LOCATION: ODISHA</p>
+            </div>
+            <div class="socials">
+                <div class="magnetic-wrap"><a href="https://www.youtube.com/@SANGRAMYT" target="_blank" class="social-link magnetic-elem">YouTube</a></div>
+                <div class="magnetic-wrap"><a href="https://www.instagram.com/iamsngrm" target="_blank" class="social-link magnetic-elem">Instagram</a></div>
+                <div class="magnetic-wrap"><a href="https://discord.com/invite/kKM75jmQwu" target="_blank" class="social-link magnetic-elem">Discord</a></div>
+            </div>
         </div>
     </footer>
 
     <script>
-        // --- 1. PRELOADER LOGIC ---
-        let count = 0;
-        const counterElement = document.querySelector('.counter');
-        const fillElement = document.querySelector('.progress-fill');
-        const preloader = document.querySelector('.preloader');
+        // ---------------------------------------------------------
+        // 1. LENIS SMOOTH SCROLL INIT
+        // ---------------------------------------------------------
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical', smooth: true, mouseMultiplier: 1
+        });
         
-        let loaderInterval = setInterval(() => {
-            count += Math.floor(Math.random() * 5) + 1; // Count up randomly
-            if (count > 100) count = 100;
-            counterElement.innerText = count + '%';
-            fillElement.style.width = count + '%';
+        lenis.on('scroll', (e) => {
+            ScrollTrigger.update();
+            // Update Scroll Progress Bar
+            const progress = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+            document.querySelector('.scroll-progress-fill').style.height = `${progress}%`;
+        });
+        
+        gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0, 0);
+        lenis.stop(); // Lock scroll during preload
+
+        // ---------------------------------------------------------
+        // 2. MODEL-SYNC PRELOADER (THE BIRD FIX)
+        // ---------------------------------------------------------
+        const modelEl = document.getElementById('phoenix-model');
+        const counterText = document.querySelector('.loader-math');
+        const fillBar = document.querySelector('.loader-bar-fill');
+        const statusText = document.querySelector('.loader-status');
+        let currentLoad = 0;
+
+        // Listen to actual download progress from Google Model Viewer
+        modelEl.addEventListener('progress', (event) => {
+            const progressRaw = event.detail.totalProgress * 100;
+            // Smoothly animate the UI up to the raw progress
+            gsap.to(fillBar, { width: progressRaw + '%', duration: 0.2 });
             
-            if (count === 100) {
-                clearInterval(loaderInterval);
-                setTimeout(() => {
-                    preloader.style.opacity = '0';
-                    setTimeout(() => preloader.style.display = 'none', 1000);
-                    // Trigger Hero Animations
-                    document.querySelector('.subtitle').style.animation = 'fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards';
-                    document.querySelector('.hero h1').style.animation = 'fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards';
-                    document.querySelector('.model-container').style.animation = 'birdEnter 2s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards';
-                }, 500);
-            }
-        }, 30);
-
-        // --- 2. CUSTOM CURSOR LOGIC ---
-        const cursorDot = document.querySelector('.cursor-dot');
-        const cursorRing = document.querySelector('.cursor-ring');
-        
-        document.addEventListener('mousemove', (e) => {
-            cursorDot.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-            // Slight delay on ring for smooth drag effect
-            setTimeout(() => { cursorRing.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`; }, 50);
+            // Increment numbers visually
+            let updateCounter = setInterval(() => {
+                if(currentLoad < Math.floor(progressRaw)) {
+                    currentLoad++;
+                    counterText.innerText = currentLoad.toString().padStart(3, '0');
+                    if(currentLoad > 30) statusText.innerText = "Parsing Geometry...";
+                    if(currentLoad > 70) statusText.innerText = "Applying Textures...";
+                } else {
+                    clearInterval(updateCounter);
+                }
+                
+                // When 100% loaded, trigger the site reveal
+                if(currentLoad === 100 && progressRaw === 100) {
+                    clearInterval(updateCounter);
+                    statusText.innerText = "Systems Ready.";
+                    revealSite();
+                }
+            }, 10);
         });
 
-        // Hover states for links
-        document.querySelectorAll('a, .content-box').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                cursorRing.style.width = '60px'; cursorRing.style.height = '60px';
-                cursorRing.style.background = 'rgba(144, 224, 175, 0.1)';
+        // Fallback just in case the model loads instantly from cache before script runs
+        setTimeout(() => { if (currentLoad === 0) { currentLoad = 100; revealSite(); } }, 5000);
+
+        let hasRevealed = false;
+        function revealSite() {
+            if(hasRevealed) return;
+            hasRevealed = true;
+            
+            gsap.to(".preloader", {
+                yPercent: -100, duration: 1.5, ease: "power4.inOut", delay: 0.5,
+                onComplete: () => {
+                    document.querySelector('.preloader').style.display = 'none';
+                    lenis.start(); // Unlock scroll
+                    
+                    // EXPLICITLY SHOW THE BIRD CONTAINER
+                    gsap.to('.model-container', {
+                        autoAlpha: 1, // Fixes both visibility and opacity perfectly
+                        scale: 1, y: 0, duration: 2, ease: "power3.out"
+                    });
+                    
+                    // Animate Text
+                    gsap.to('.hero-title .gsap-line', { y: '0%', duration: 1.2, stagger: 0.1, ease: "power4.out" });
+                    gsap.to('.hero-tagline', { opacity: 1, duration: 1 }, "-=0.8");
+                }
             });
-            el.addEventListener('mouseleave', () => {
-                cursorRing.style.width = '36px'; cursorRing.style.height = '36px';
-                cursorRing.style.background = 'transparent';
+        }
+
+        // ---------------------------------------------------------
+        // 3. CANVAS FLUID PARTICLE ENGINE
+        // ---------------------------------------------------------
+        const canvas = document.getElementById('ambient-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+
+        let particlesArray = [];
+        let mouse = { x: null, y: null };
+        window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY;
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                
+                // Mouse Parallax effect
+                if (mouse.x) {
+                    let dx = mouse.x - this.x; let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 200) { this.x -= dx * 0.005; this.y -= dy * 0.005; }
+                }
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(144, 224, 175, 0.4)';
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+        function initParticles() { for (let i = 0; i < 100; i++) { particlesArray.push(new Particle()); } }
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) { particlesArray[i].update(); particlesArray[i].draw(); }
+            requestAnimationFrame(animateParticles);
+        }
+        initParticles(); animateParticles();
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+
+        // ---------------------------------------------------------
+        // 4. APPLE TV 3D CARD TILT ENGINE
+        // ---------------------------------------------------------
+        document.querySelectorAll('.tilt-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; 
+                const y = e.clientY - rect.top;
+                
+                // Calculate glow variable
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+
+                // Calculate 3D tilt
+                const xPct = (x / rect.width - 0.5) * 2; // -1 to 1
+                const yPct = (y / rect.height - 0.5) * 2; // -1 to 1
+                
+                gsap.to(card, {
+                    rotationX: -yPct * 8, // Max 8 degrees tilt
+                    rotationY: xPct * 8,
+                    ease: "power2.out", duration: 0.5
+                });
+            });
+
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, { rotationX: 0, rotationY: 0, ease: "elastic.out(1, 0.3)", duration: 1.2 });
             });
         });
 
-        // --- 3. APPLE-STYLE TEXT SPLITTER ---
-        document.querySelectorAll('.split-text').forEach(title => {
-            let text = title.innerText; title.innerHTML = ''; 
-            for(let i=0; i<text.length; i++) {
-                let char = text[i] === ' ' ? '&nbsp;' : text[i];
-                let span = document.createElement('span');
-                span.innerHTML = char;
-                span.style.transition = `transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) ${0.1 + (i * 0.03)}s, opacity 0.5s ease ${0.1 + (i * 0.03)}s`;
-                title.appendChild(span);
-            }
+        // ---------------------------------------------------------
+        // 5. CUSTOM CURSOR & MAGNETIC UI
+        // ---------------------------------------------------------
+        let xToDot = gsap.quickTo(".cursor-dot", "x", {duration: 0.1, ease: "power3"});
+        let yToDot = gsap.quickTo(".cursor-dot", "y", {duration: 0.1, ease: "power3"});
+        let xToRing = gsap.quickTo(".cursor-ring", "x", {duration: 0.4, ease: "power3"});
+        let yToRing = gsap.quickTo(".cursor-ring", "y", {duration: 0.4, ease: "power3"});
+
+        window.addEventListener("mousemove", (e) => {
+            xToDot(e.clientX); yToDot(e.clientY);
+            xToRing(e.clientX); yToRing(e.clientY);
         });
 
-        // --- 4. INTERSECTION OBSERVER ---
-        document.addEventListener("DOMContentLoaded", () => {
-            const observerOptions = { root: null, rootMargin: '-50px', threshold: 0.15 };
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('show'); });
-            }, observerOptions);
-            observer.observe(document.querySelector('.about-section'));
-            document.querySelectorAll('.content-box').forEach(box => observer.observe(box));
+        document.querySelectorAll('a, .magnetic-trigger').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
         });
 
-        // --- 5. THE ULTIMATE 3D FLIGHT PATH ---
+        document.querySelectorAll('.magnetic-wrap').forEach(wrap => {
+            const elem = wrap.querySelector('.magnetic-elem');
+            wrap.addEventListener('mousemove', (e) => {
+                const rect = wrap.getBoundingClientRect();
+                const dx = (e.clientX - (rect.left + rect.width / 2)) * 0.3; 
+                const dy = (e.clientY - (rect.top + rect.height / 2)) * 0.3;
+                gsap.to(elem, { x: dx, y: dy, duration: 0.4, ease: "power3.out" });
+            });
+            wrap.addEventListener('mouseleave', () => { gsap.to(elem, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.3)" }); });
+        });
+
+        // ---------------------------------------------------------
+        // 6. DYNAMIC TEXT SPLITTING & BACKGROUND COLORS
+        // ---------------------------------------------------------
+        document.querySelectorAll('.split-lines').forEach(el => {
+            let text = el.innerText; el.innerHTML = '';
+            let wrapper = document.createElement('div'); wrapper.style.overflow = 'hidden'; wrapper.style.display = 'inline-block';
+            let inner = document.createElement('div'); inner.innerText = text; inner.style.transform = 'translateY(110%)'; inner.classList.add('gsap-line');
+            wrapper.appendChild(inner); el.appendChild(wrapper);
+        });
+
         gsap.registerPlugin(ScrollTrigger);
-        const model = document.querySelector('model-viewer');
-        const rot = { pitch: 0, yaw: 0, roll: 0 }; 
 
-        const updateOrientation = () => { model.setAttribute('orientation', `${rot.pitch}deg ${rot.yaw}deg ${rot.roll}deg`); };
+        // Transition background color based on section data-bgcolor
+        document.querySelectorAll('.section-block').forEach((sec) => {
+            let bgColor = sec.getAttribute('data-bgcolor');
+            if(bgColor) {
+                ScrollTrigger.create({
+                    trigger: sec, start: "top 50%", end: "bottom 50%",
+                    onEnter: () => gsap.to("body", { backgroundColor: bgColor, duration: 1 }),
+                    onEnterBack: () => gsap.to("body", { backgroundColor: bgColor, duration: 1 })
+                });
+            }
 
-        let tl = gsap.timeline({
-            scrollTrigger: { trigger: "#work", start: "top 80%", endTrigger: "#arsenal", end: "top 50%", scrub: 2.5 }
+            gsap.to(sec.querySelectorAll('.gsap-line'), {
+                scrollTrigger: { trigger: sec, start: "top 85%" },
+                y: '0%', duration: 1, stagger: 0.1, ease: "power4.out"
+            });
         });
 
-        // Hop 1: Fly Right
-        tl.to(".model-container", { x: "55vw", y: "15vh", scale: 1.3, ease: "power2.inOut" }, "hop1")
-          .to(rot, { pitch: 10, yaw: 25, roll: -20, onUpdate: updateOrientation, ease: "power2.inOut" }, "hop1")
-        // Hop 2: Fly Left
-        .to(".model-container", { x: "0vw", y: "40vh", scale: 0.8, ease: "power2.inOut" }, "hop2")
-        .to(rot, { pitch: -5, yaw: -150, roll: 15, onUpdate: updateOrientation, ease: "power2.inOut" }, "hop2")
-        // Hop 3: Fly Right
-        .to(".model-container", { x: "55vw", y: "65vh", scale: 1.2, ease: "power2.inOut" }, "hop3")
-        .to(rot, { pitch: 15, yaw: 15, roll: -15, onUpdate: updateOrientation, ease: "power2.inOut" }, "hop3")
-        // Hop 4: Fly Left (Typography)
-        .to(".model-container", { x: "0vw", y: "90vh", scale: 1, ease: "power2.inOut" }, "hop4")
-        .to(rot, { pitch: 0, yaw: -180, roll: 0, onUpdate: updateOrientation, ease: "power2.inOut" }, "hop4")
-        // FINAL HOP: Dive into the Tech Stack!
-        .to(".model-container", { x: "40vw", y: "120vh", scale: 1.5, ease: "power2.inOut" }, "hop5")
-        .to(rot, { pitch: 25, yaw: -30, roll: -10, onUpdate: updateOrientation, ease: "power2.inOut" }, "hop5");
+        // ---------------------------------------------------------
+        // 7. THE MASTER 3D FLIGHT PATH
+        // ---------------------------------------------------------
+        const rot = { pitch: 0, yaw: 0, roll: 0 }; 
+        const updateModel3D = () => { if(modelEl.setAttribute) modelEl.setAttribute('orientation', `${rot.pitch}deg ${rot.yaw}deg ${rot.roll}deg`); };
+
+        let flightPath = gsap.timeline({
+            scrollTrigger: { trigger: "#work", start: "top 90%", endTrigger: "#arsenal", end: "top 40%", scrub: 2.5 }
+        });
+
+        // F1: Dive Right
+        flightPath.to(".model-container", { x: "55vw", y: "15vh", scale: 1.3, ease: "sine.inOut" }, "f1")
+          .to(rot, { pitch: 15, yaw: 25, roll: -20, onUpdate: updateModel3D, ease: "sine.inOut" }, "f1")
+        // F2: Bank Left
+        .to(".model-container", { x: "0vw", y: "40vh", scale: 0.75, ease: "sine.inOut" }, "f2")
+        .to(rot, { pitch: -5, yaw: -160, roll: 20, onUpdate: updateModel3D, ease: "sine.inOut" }, "f2")
+        // F3: Bank Right
+        .to(".model-container", { x: "55vw", y: "65vh", scale: 1.25, ease: "sine.inOut" }, "f3")
+        .to(rot, { pitch: 12, yaw: 20, roll: -15, onUpdate: updateModel3D, ease: "sine.inOut" }, "f3")
+        // F4: Level out Left
+        .to(".model-container", { x: "0vw", y: "90vh", scale: 1, ease: "sine.inOut" }, "f4")
+        .to(rot, { pitch: 0, yaw: -180, roll: 0, onUpdate: updateModel3D, ease: "sine.inOut" }, "f4")
+        // F5: Final Dive into Arsenal
+        .to(".model-container", { x: "35vw", y: "135vh", scale: 1.6, ease: "power1.inOut" }, "f5")
+        .to(rot, { pitch: 35, yaw: -20, roll: -15, onUpdate: updateModel3D, ease: "power1.inOut" }, "f5");
 
     </script>
 </body>
 </html>
-
