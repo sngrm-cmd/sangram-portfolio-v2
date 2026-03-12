@@ -291,6 +291,34 @@
                 <div class="video-box"><video autoplay loop muted playsinline><source src="B2Beach.mp4" type="video/mp4"></video></div>
             </div>
         </div>
+
+        <div class="w-full flex justify-end" data-bgcolor="#081020">
+            <div class="glass-card slide-right magnetic-trigger tilt-card w-full lg:w-[48%] p-8 md:p-[4vw]">
+                <div class="cc-light-sweep"></div>
+                <svg class="saber-wrapper" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><rect class="saber-path" x="0" y="0" width="100%" height="100%" pathLength="100" /></svg>
+                <div class="flex justify-between items-center border-b border-[rgba(255,255,255,0.05)] pb-5 mb-8">
+                    <span class="font-mono text-sm text-[#00d2ff]">// 003. FLOW</span>
+                    <span class="font-mono text-[10px] text-gray-500 uppercase tracking-widest">Trend Sync</span>
+                </div>
+                <h2 class="text-[clamp(30px,3vw,48px)] font-black tracking-tighter mb-5 leading-tight split-chars-dynamic">Trend Sync & Pacing</h2>
+                <p class="text-[15px] text-gray-400 leading-relaxed mb-10">High-impact editing calculated to hold retention. Driven by hyper-smooth transitions, speed ramping, and heavy audio rhythm synchronization.</p>
+                <div class="video-box"><video autoplay loop muted playsinline><source src="B3Tiki.mp4" type="video/mp4"></video></div>
+            </div>
+        </div>
+
+        <div class="w-full flex justify-start" data-bgcolor="#050912">
+            <div class="glass-card slide-left magnetic-trigger tilt-card w-full lg:w-[48%] p-8 md:p-[4vw]">
+                <div class="cc-light-sweep"></div>
+                <svg class="saber-wrapper" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><rect class="saber-path" x="0" y="0" width="100%" height="100%" pathLength="100" /></svg>
+                <div class="flex justify-between items-center border-b border-[rgba(255,255,255,0.05)] pb-5 mb-8">
+                    <span class="font-mono text-sm text-[#00d2ff]">// 004. TYPO</span>
+                    <span class="font-mono text-[10px] text-gray-500 uppercase tracking-widest">Design Sys</span>
+                </div>
+                <h2 class="text-[clamp(30px,3vw,48px)] font-black tracking-tighter mb-5 leading-tight split-chars-dynamic">Kinetic Typography</h2>
+                <p class="text-[15px] text-gray-400 leading-relaxed mb-10">Transforming static text into a physical element. Engineering fluid motion profiles that communicate style, hierarchy, and information simultaneously.</p>
+                <div class="video-box"><video autoplay loop muted playsinline><source src="B4Sngrm.mp4" type="video/mp4"></video></div>
+            </div>
+        </div>
     </section>
 
     <section class="px-[6vw] lg:px-[10vw] py-24 relative z-10 border-t border-[rgba(255,255,255,0.05)] bg-[radial-gradient(circle_at_50%_100%,rgba(0,210,255,0.03)_0%,transparent_70%)]" id="arsenal">
@@ -507,7 +535,7 @@
         document.querySelectorAll('.split-chars-dynamic').forEach(el => {
             let text = el.innerText; el.innerHTML = '';
             for(let i=0; i<text.length; i++){
-                let char = text[i] === ' ' ? '&nbsp;' : text[i];
+                let char = text[i] === ' ' ? ' ' : text[i];
                 let wrapper = document.createElement('span'); 
                 wrapper.style.overflow = 'hidden'; wrapper.style.display = 'inline-block';
                 let inner = document.createElement('span'); inner.innerHTML = char; 
