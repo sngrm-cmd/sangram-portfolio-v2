@@ -39,6 +39,11 @@
 
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
         
+        html, body {
+            overscroll-behavior-y: none; 
+            touch-action: pan-y manipulation;
+        }
+
         html.lenis { height: auto; }
         .lenis.lenis-smooth { scroll-behavior: auto; }
         .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
@@ -49,8 +54,6 @@
             font-family: 'Inter', sans-serif; overflow-x: hidden;
             -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
             transition: background-color 1.5s var(--ease-apple);
-            /* FIX: Prevent pinch-zoom on touch devices */
-            touch-action: pan-y;
         }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
@@ -60,15 +63,14 @@
         /* ==========================================================================
            2. GLOBAL ENVIRONMENT EFFECTS (Canvas, Noise, Grid, HUD)
            ========================================================================== */
-        #ambient-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: -2; pointer-events: none; opacity: 0.5; }
+        #ambient-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100dvh; z-index: -2; pointer-events: none; opacity: 0.5; }
         
-        .gradient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: radial-gradient(circle at 50% 0%, var(--bg-mid) 0%, transparent 80%); z-index: -1; pointer-events: none; mix-blend-mode: screen; transition: background 1.5s var(--ease-apple); }
+        .gradient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100dvh; background: radial-gradient(circle at 50% 0%, var(--bg-mid) 0%, transparent 80%); z-index: -1; pointer-events: none; mix-blend-mode: screen; transition: background 1.5s var(--ease-apple); }
         
-        .tech-grid { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px); background-size: 60px 60px; z-index: -1; pointer-events: none; opacity: 0.7; mask-image: radial-gradient(circle at center, black 30%, transparent 100%); -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 100%); }
+        .tech-grid { position: fixed; top: 0; left: 0; width: 100%; height: 100dvh; background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px); background-size: 60px 60px; z-index: -1; pointer-events: none; opacity: 0.7; mask-image: radial-gradient(circle at center, black 30%, transparent 100%); -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 100%); }
         
-        .noise { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; pointer-events: none; z-index: 9998; opacity: 0.05; mix-blend-mode: overlay; background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); }
+        .noise { position: fixed; top: 0; left: 0; width: 100%; height: 100dvh; pointer-events: none; z-index: 9998; opacity: 0.05; mix-blend-mode: overlay; background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"); }
 
-        /* MOBILE FIX: Hide HUD elements on extremely small screens if they overlap */
         @media (max-width: 640px) {
             .hud-top-left, .hud-bottom-left { display: none; }
             .scroll-progress-container { right: 10px; }
@@ -80,7 +82,7 @@
         .hud-bottom-left { bottom: 30px; left: 30px; }
         .hud-value { color: var(--accent-primary); font-weight: 700; margin-left: 5px; }
 
-        .scroll-progress-container { position: fixed; right: 30px; top: 50%; transform: translateY(-50%); height: 30vh; width: 1px; background: rgba(255,255,255,0.1); z-index: 9000; overflow: hidden; }
+        .scroll-progress-container { position: fixed; right: 30px; top: 50%; transform: translateY(-50%); height: 30dvh; width: 1px; background: rgba(255,255,255,0.1); z-index: 9000; overflow: hidden; }
         .scroll-progress-fill { position: absolute; top: 0; left: 0; width: 100%; height: 0%; background: var(--accent-primary); box-shadow: 0 0 10px var(--accent-glow); }
 
         /* ==========================================================================
@@ -91,17 +93,16 @@
         .cursor-hover .cursor-ring { width: 70px; height: 70px; background: rgba(0, 210, 255, 0.05); border-color: rgba(0, 210, 255, 0.8); backdrop-filter: blur(4px); }
         .cursor-hover .cursor-dot { transform: translate(-50%, -50%) scale(0); }
 
-        /* MOBILE FIX: Force default cursor on touch devices to prevent tap lag */
         @media (hover: none) and (pointer: coarse) {
             *, *::before, *::after { cursor: auto !important; }
             .cursor-dot, .cursor-ring { display: none !important; }
-            .magnetic-wrap a { opacity: 1; } /* Ensure links are always visible on mobile */
+            .magnetic-wrap a { opacity: 1; } 
         }
 
         /* ==========================================================================
            4. TERMINAL BOOT PRELOADER 
            ========================================================================== */
-        .preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: #000; z-index: 100000; display: flex; flex-direction: column; justify-content: space-between; padding: 4vw; }
+        .preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100dvh; background: #000; z-index: 100000; display: flex; flex-direction: column; justify-content: space-between; padding: 4vw; }
         .terminal-header { font-family: 'JetBrains Mono', monospace; color: var(--text-dim); font-size: 12px; }
         .terminal-body { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
         .terminal-line { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--accent-primary); margin-bottom: 8px; opacity: 0; text-shadow: 0 0 5px rgba(0,210,255,0.4); }
@@ -116,18 +117,17 @@
             position: fixed; z-index: 9500; object-fit: cover; border-radius: 50%; 
             border: 2px solid rgba(255,255,255,0.15); pointer-events: none; 
             box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 30px rgba(0,210,255,0.2); 
-            top: 28vh; left: 50vw; transform: translate(-50%, -50%);
+            top: 28dvh; left: 50vw; transform: translate(-50%, -50%);
             width: 160px; height: 160px; opacity: 0; 
         }
 
-        /* MOBILE FIX: Adjust profile picture size to prevent overlapping nav on phones */
         @media (max-width: 768px) {
             #hero-profile-pic { width: 120px !important; height: 120px !important; }
         }
 
         nav { position: fixed; top: 0; left: 0; width: 100%; padding: 30px 6vw; display: flex; justify-content: space-between; align-items: center; z-index: 5000; mix-blend-mode: difference; }
         .nav-logo { display: flex; align-items: center; gap: 20px; }
-        .logo-placeholder { width: 40px; height: 40px; border-radius: 50%; } /* Slightly smaller for mobile */
+        .logo-placeholder { width: 40px; height: 40px; border-radius: 50%; } 
         
         .nav-links { display: flex; gap: 10px; md:gap-20px; flex-wrap: wrap; justify-content: flex-end; }
         .magnetic-wrap { padding: 10px 10px; md:padding: 10px 20px; display: inline-block; position: relative; }
@@ -137,12 +137,12 @@
         /* ==========================================================================
            6. HERO SECTION
            ========================================================================== */
-        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 0 6vw; text-align: center; }
+        .hero { height: 100dvh; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding: 0 6vw; text-align: center; }
         .hero-spacer { height: 120px; } 
 
         .hero-name {
             font-family: 'Inter', sans-serif; font-size: clamp(60px, 15vw, 200px); 
-            font-weight: 900; letter-spacing: clamp(4px, 1vw, 12px); text-transform: uppercase; margin-bottom: 2vh; 
+            font-weight: 900; letter-spacing: clamp(4px, 1vw, 12px); text-transform: uppercase; margin-bottom: 2dvh; 
             background: linear-gradient(120deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.15) 40%, #ffffff 50%, rgba(255,255,255,0.15) 60%, rgba(255,255,255,0.15) 100%);
             background-size: 300% auto; color: transparent; -webkit-background-clip: text;
             background-position: 100% center; opacity: 0; margin-left: 12px; 
@@ -151,7 +151,7 @@
         .hero-subtitle { opacity: 0; font-size: clamp(14px, 2vw, 28px); font-weight: 300; letter-spacing: 2px; color: var(--text-dim); }
         .hero-subtitle span { color: var(--accent-primary); font-weight: 700; }
 
-        .scroll-indicator { position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 20px; opacity: 0.4; transition: opacity 0.4s; }
+        .scroll-indicator { position: absolute; bottom: 8dvh; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 20px; opacity: 0.4; transition: opacity 0.4s; }
         .scroll-indicator:hover { opacity: 1; }
         .scroll-indicator span { font-family: 'JetBrains Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 5px; font-weight: 600; color: var(--text-pure); }
         .scroll-line { width: 1px; height: 60px; md:height: 100px; background: rgba(255,255,255,0.1); position: relative; overflow: hidden; }
@@ -175,7 +175,6 @@
         .saber-path { fill: none; stroke: var(--accent-primary); stroke-width: 2px; stroke-dasharray: 100; stroke-dashoffset: 100; filter: drop-shadow(0 0 10px var(--accent-primary)) drop-shadow(0 0 30px var(--accent-glow)); vector-effect: non-scaling-stroke; rx: 30px; transition: stroke-dashoffset 1.5s var(--ease-fluid); }
         .glass-card.saber-active .saber-path { stroke-dashoffset: 0; }
 
-        /* Video Boxes */
         .video-box { border-radius: 12px; overflow: hidden; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); transform: translateZ(80px); transition: box-shadow 0.6s var(--ease-apple), border-color 0.6s, transform 0.6s var(--ease-apple); }
         .video-box video { width: 100%; height: auto; display: block; filter: brightness(0.8) contrast(1.15) saturate(0.9); transition: filter 0.6s; }
         @media (hover: hover) {
@@ -403,6 +402,8 @@
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
+        ScrollTrigger.config({ ignoreMobileResize: true });
+
         // 1. LENIS SMOOTH SCROLL
         const lenis = new Lenis({ duration: 1.5, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), direction: 'vertical', smooth: true });
         lenis.on('scroll', (e) => {
@@ -421,7 +422,7 @@
             document.getElementById('hud-time').innerText = timeStr;
         }, 1000);
 
-        // 3. TERMINAL BOOT PRELOADER - FIX: Removed 3D references
+        // 3. TERMINAL BOOT PRELOADER
         const termBody = document.getElementById('term-body');
         const termLines = ["Connecting to local server...", "Synthesizing Chemistry & Visuals... OK", "Fetching Visual Assets... OK", "Compiling Gojo Blue Shaders... OK", "Allocating Video RAM... OK", "Initializing Main Sequence..."];
         const counterText = document.querySelector('.loader-math');
@@ -464,20 +465,34 @@
             gsap.to('.hero-subtitle', { opacity: 1, y: -10, duration: 1, ease: "power2.out", delay: 1 });
         }
 
-        // 4. FIXED PROFILE PIC PARALLAX
-        // MOBILE FIX: Dynamically adjust the end position based on screen width so it doesn't block the nav links
-        const isMobile = window.innerWidth <= 768;
-        const profileEndLeft = isMobile ? "50vw" : "6vw";
-        const profileEndX = isMobile ? -50 : 0;
-        
-        gsap.set("#hero-profile-pic", { top: "28vh", left: "50vw", xPercent: -50, yPercent: -50, width: "160px", height: "160px" });
-        gsap.to("#hero-profile-pic", {
-            scrollTrigger: { trigger: "body", start: "top top", end: "300px top", scrub: 0.2 },
-            top: "40px", left: profileEndLeft, xPercent: profileEndX, yPercent: 0, width: "40px", height: "40px",
-            ease: "power2.inOut"
+        // 4. FLUID PROFILE PIC PARALLAX
+        gsap.set("#hero-profile-pic", { 
+            top: "28dvh", 
+            left: "50vw", 
+            xPercent: -50, 
+            yPercent: -50, 
+            width: "160px", 
+            height: "160px" 
         });
+        
+        gsap.to("#hero-profile-pic", {
+            scrollTrigger: { 
+                trigger: "body", 
+                start: "top top", 
+                end: "500px top", // Extended distance for smoother, less abrupt animation
+                scrub: 1 // Increased from 0.2 to 1 for fluid 'gliding' catch-up effect
+            },
+            top: "30px", // Exact top position of the logo placeholder
+            left: "6vw", // Exact left position of the logo placeholder
+            xPercent: 0, 
+            yPercent: 0, 
+            width: "40px", 
+            height: "40px",
+            ease: "none"
+        });
+        
         gsap.to(".hero-name", {
-            scrollTrigger: { trigger: "body", start: "top top", end: "500px top", scrub: 0.2 },
+            scrollTrigger: { trigger: "body", start: "top top", end: "500px top", scrub: 0.5 },
             backgroundPosition: "-50% center", ease: "none"
         });
 
@@ -497,7 +512,6 @@
             draw() { ctx.fillStyle = 'rgba(0, 210, 255, 0.5)'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
         }
         function initParticles() { 
-            // MOBILE FIX: Reduce particles on smaller screens to save performance
             const particleCount = window.innerWidth < 768 ? 50 : 120;
             for (let i = 0; i < particleCount; i++) { particlesArray.push(new Particle()); } 
         }
@@ -517,7 +531,6 @@
         window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
 
         // 6. APPLE TV 3D TILT ENGINE
-        // MOBILE FIX: Only run tilt if hover is supported
         if (window.matchMedia("(hover: hover)").matches) {
             document.querySelectorAll('.tilt-card').forEach(card => {
                 card.addEventListener('mousemove', (e) => {
@@ -531,7 +544,6 @@
         }
 
         // 7. MAGNETIC CURSOR & UI LINKS
-        // MOBILE FIX: Completely disable JS cursor updates on touch devices
         if (window.matchMedia("(pointer: fine)").matches) {
             let xToDot = gsap.quickTo(".cursor-dot", "x", {duration: 0.1, ease: "power3"});
             let yToDot = gsap.quickTo(".cursor-dot", "y", {duration: 0.1, ease: "power3"});
@@ -571,7 +583,6 @@
         });
 
         // 9. SCROLL ANIMATIONS: SLIDE-INS & COLOR TRIGGERS
-        // Background color shifts 
         document.querySelectorAll('section[data-bgcolor]').forEach((sec, index) => {
             let bgColor = sec.getAttribute('data-bgcolor');
             ScrollTrigger.create({ 
@@ -586,22 +597,18 @@
             });
         });
 
-        // Slide Left animations
         document.querySelectorAll('.slide-left').forEach(el => {
             gsap.from(el, { x: -120, opacity: 0, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none reverse" } });
         });
 
-        // Slide Right animations
         document.querySelectorAll('.slide-right').forEach(el => {
             gsap.from(el, { x: 120, opacity: 0, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none reverse" } });
         });
 
-        // Slide Up animations
         document.querySelectorAll('.slide-up').forEach(el => {
             gsap.from(el, { y: 100, opacity: 0, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%", toggleActions: "play none none reverse" } });
         });
 
-        // Character Stagger inside containers
         document.querySelectorAll('.glass-card, .slide-up, .about-text').forEach((card) => {
             const chars = card.querySelectorAll('.gsap-char');
             if(chars.length) {
@@ -611,7 +618,6 @@
                 });
             }
             
-            // Saber Line Trigger 
             ScrollTrigger.create({ 
                 trigger: card, 
                 start: "top 70%", 
@@ -619,14 +625,11 @@
                 onLeaveBack: () => card.classList.remove('saber-active')
             });
             
-            // Glare Sweep Trigger 
             const sweepElement = card.querySelector('.cc-light-sweep');
             if (sweepElement) {
                 gsap.to(sweepElement, { scrollTrigger: { trigger: card, start: "top bottom", end: "bottom top", scrub: 0.2 }, left: "200%", ease: "none" });
             }
         });
-
-        // REMOVED: 10. 3D MODELS SCROLL ROTATION logic entirely.
 
     </script>
 </body>
